@@ -1,10 +1,19 @@
 fetch('data.csv')
-    .then(response => response.text())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
     .then(csv => {
         const data = parseCSV(csv);
         displayTable(data);
         setupFilters(data);
         displayAdditionalText();
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        document.body.innerHTML = '<p>데이터를 불러오는 중 오류가 발생했습니다.</p>';
     });
 
 function parseCSV(csv) {
@@ -149,14 +158,3 @@ function setupFilters(data) {
             removeButton.style.cursor = 'pointer';
             removeButton.addEventListener('click', () => {
                 delete filters[header];
-                updateFiltersDisplay(filters);
-                filterTable(data, filters);
-            });
-            filterElement.appendChild(removeButton);
-            displayDiv.appendChild(filterElement);
-        }
-        filtersDiv.parentNode.insertBefore(displayDiv, filtersDiv.nextSibling);
-    }
-
-    function filterTable(data, filters) {
-        let filteredData = data
