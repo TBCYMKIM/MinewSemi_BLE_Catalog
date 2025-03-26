@@ -1,9 +1,3 @@
-네, 요청하신 기능을 구현하기 위해 JavaScript 코드를 수정해 드리겠습니다.
-
-JavaScript (script.js) 수정:
-
-JavaScript
-
 fetch('data.csv')
     .then(response => response.text())
     .then(csv => {
