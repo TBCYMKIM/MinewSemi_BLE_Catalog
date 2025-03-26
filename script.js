@@ -61,7 +61,15 @@ function setupFilters(data) {
                 filterList.appendChild(valueDiv);
             });
 
-            filterBar.addEventListener('click', () => {
+            filterBar.addEventListener('click', (event) => {
+                document.querySelectorAll('.filter-list').forEach(list => {
+                    if (list !== filterList) {
+                        list.style.display = 'none';
+                    }
+                });
+
+                filterList.style.top = event.target.offsetTop + event.target.offsetHeight + 'px';
+                filterList.style.left = event.target.offsetLeft + 'px';
                 filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
             });
 
@@ -86,7 +94,15 @@ function setupFilters(data) {
                 filterList.appendChild(rangeDiv);
             });
 
-            filterBar.addEventListener('click', () => {
+            filterBar.addEventListener('click', (event) => {
+                document.querySelectorAll('.filter-list').forEach(list => {
+                    if (list !== filterList) {
+                        list.style.display = 'none';
+                    }
+                });
+
+                filterList.style.top = event.target.offsetTop + event.target.offsetHeight + 'px';
+                filterList.style.left = event.target.offsetLeft + 'px';
                 filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
             });
 
