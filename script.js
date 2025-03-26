@@ -7,9 +7,13 @@ fetch('data.csv')
     })
     .then(csv => {
         const data = parseCSV(csv);
-        displayTable(data);
-        setupFilters(data);
-        displayAdditionalText();
+        if (data && data.length > 0) {
+            displayTable(data);
+            setupFilters(data);
+            displayAdditionalText();
+        } else {
+            document.body.innerHTML = '<p>데이터가 없거나 형식이 잘못되었습니다.</p>';
+        }
     })
     .catch(error => {
         console.error('Error fetching data:', error);
@@ -36,6 +40,11 @@ function parseCSV(csv) {
 function displayTable(data) {
     const tableBody = document.querySelector('#productTable tbody');
     const tableHeader = document.querySelector('#productTable thead tr');
+    if (!tableBody || !tableHeader) {
+        console.error('Table elements not found.');
+        document.body.innerHTML = '<p>테이블 요소를 찾을 수 없습니다.</p>';
+        return;
+    }
     tableHeader.innerHTML = '';
 
     if (data.length > 0) {
@@ -61,6 +70,11 @@ function displayTable(data) {
 
 function setupFilters(data) {
     const filtersDiv = document.getElementById('filters');
+    if (!filtersDiv) {
+        console.error('Filters element not found.');
+        document.body.innerHTML = '<p>필터 요소를 찾을 수 없습니다.</p>';
+        return;
+    }
     const headers = Object.keys(data[0]);
     const selectedFilters = {};
 
@@ -150,11 +164,4 @@ function setupFilters(data) {
         displayDiv.innerHTML = '';
         for (const header in filters) {
             const filterValue = filters[header];
-            const filterText = typeof filterValue === 'object' ? `${header}: ${filterValue.min} ~ ${filterValue.max}` : `${header}: ${filterValue}`;
-            const filterElement = document.createElement('span');
-            filterElement.textContent = filterText;
-            const removeButton = document.createElement('span');
-            removeButton.textContent = ' x ';
-            removeButton.style.cursor = 'pointer';
-            removeButton.addEventListener('click', () => {
-                delete filters[header];
+            const filterText = typeof
