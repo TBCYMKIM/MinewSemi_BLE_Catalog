@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>제품 카탈로그</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .filter-bar {
+            cursor: pointer;
+            background-color: #e0e0e0;
+            padding: 8px;
+            margin-bottom: 5px;
+        }
+        .filter-list {
+            display: none;
+            border: 1px solid #ccc;
+            position: absolute;
+            background-color: white;
+            z-index: 1;
+        }
+        .filter-list div {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .filter-list div:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="filters"></div>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Chipset Vendor</th>
+                <th>Model Series</th>
+                <th>Model No.</th>
+                <th>Antenna</th>
+                <th>SoCset</th>
+                <th>Max Range (M)</th>
+                <th>Max Length (mm)</th>
+                <th>Mid Length (mm)</th>
+                <th>Min Length (mm)</th>
+                <th>Flash (KB)</th>
+                <th>RAM (KB)</th>
+                <th>Reception Sensitivity (dBm)</th>
+                <th>Transmission Power (min, dBm)</th>
+                <th>Transmission Power (max, dBm)</th>
+                <th>Current (TX, mA)</th>
+                <th>Current (RX, mA)</th>
+                <th>GPIO</th>
+                <th>Certification</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script src="script.js"></script>
+</body>
+</html>
