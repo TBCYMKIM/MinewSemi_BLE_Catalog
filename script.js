@@ -31,31 +31,25 @@ function parseCSV(csv) {
 
 function renderTabs(data) {
     const filterContainer = document.getElementById('filter-container');
-    const headers = Object.keys(data[0]);
+    const chipsetVendors = [...new Set(data.map(item => item['Chipset Vendor']))];
 
-    headers.forEach(header => {
+    chipsetVendors.forEach(vendor => {
         const tab = document.createElement('div');
         tab.classList.add('tab');
-        tab.textContent = header;
+        tab.textContent = vendor;
         filterContainer.appendChild(tab);
 
         const filterList = document.createElement('ul');
         filterList.classList.add('filter-list');
         filterList.style.display = 'none';
 
-        const uniqueValues = [...new Set(data.map(item => {
-            if (['Certification'].includes(header)) {
-                return item[header].split(',')[0].trim();
-            } else {
-                return item[header];
-            }
-        }))];
+        const uniqueValues = [...new Set(data.map(item => item['Chipset Vendor']))];
 
         uniqueValues.forEach(value => {
             const listItem = document.createElement('li');
             listItem.textContent = value;
             listItem.addEventListener('click', () => {
-                addFilter(header, value);
+                addFilter('Chipset Vendor', value);
                 filterList.style.display = 'none';
             });
             filterList.appendChild(listItem);
@@ -63,7 +57,7 @@ function renderTabs(data) {
 
         tab.addEventListener('click', () => {
             const lists = document.querySelectorAll('.filter-list');
-            lists.forEach(list => list.style.display = 'none');
+            lists.forEach(list => list.style.display = 'none';
             filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
         });
 
