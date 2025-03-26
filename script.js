@@ -68,8 +68,9 @@ function setupFilters(data) {
                     }
                 });
 
-                filterList.style.top = event.target.offsetTop + event.target.offsetHeight + 'px';
-                filterList.style.left = event.target.offsetLeft + 'px';
+                const rect = event.target.getBoundingClientRect();
+                filterList.style.top = rect.bottom + window.scrollY + 'px';
+                filterList.style.left = rect.left + window.scrollX + 'px';
                 filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
             });
 
@@ -101,8 +102,9 @@ function setupFilters(data) {
                     }
                 });
 
-                filterList.style.top = event.target.offsetTop + event.target.offsetHeight + 'px';
-                filterList.style.left = event.target.offsetLeft + 'px';
+                const rect = event.target.getBoundingClientRect();
+                filterList.style.top = rect.bottom + window.scrollY + 'px';
+                filterList.style.left = rect.left + window.scrollX + 'px';
                 filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
             });
 
