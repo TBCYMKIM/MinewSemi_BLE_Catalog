@@ -81,4 +81,5 @@ header {
 
 #additional-info {
     margin-top: 20px;
+    font-size: 0.8em; /* 텍스트 크기를 작게 조정 */
 }
