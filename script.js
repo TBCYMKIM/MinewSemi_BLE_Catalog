@@ -3,13 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.text())
         .then(csv => {
             const data = parseCSV(csv);
-            originalData = data; // 원본 데이터 저장
+            originalData = data;
             renderTabs(data);
             renderDataTable(data);
         });
 });
 
-let originalData = []; // 전역 변수 선언
+let originalData = [];
+let filters = {};
 
 function parseCSV(csv) {
     const lines = csv.split('\n');
@@ -45,8 +46,6 @@ function renderTabs(data) {
         const uniqueValues = [...new Set(data.map(item => {
             if (['Certification'].includes(header)) {
                 return item[header].split(',')[0].trim();
-            } else if (['Max Range (M)', 'Max Length (mm)', 'Mid Length (mm)', 'Min Length (mm)', 'Flash (KB)', 'RAM (KB)', 'Reception Sensitivity (dBm)', 'Transmission Power (min, dBM)', 'Transmission Power (max, dBM)', 'Current (TX, mA)', 'Current (RX, mA)', 'GPIO'].includes(header)) {
-                return item[header];
             } else {
                 return item[header];
             }
@@ -63,18 +62,14 @@ function renderTabs(data) {
         });
 
         tab.addEventListener('click', () => {
-            if (filterList.style.display === 'block') {
-                filterList.style.display = 'none';
-            } else {
-                filterList.style.display = 'block';
-            }
+            const lists = document.querySelectorAll('.filter-list');
+            lists.forEach(list => list.style.display = 'none');
+            filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
         });
 
         filterContainer.appendChild(filterList);
     });
 }
-
-const filters = {};
 
 function addFilter(header, value) {
     if (!filters[header]) {
@@ -119,7 +114,7 @@ function renderFilters() {
 }
 
 function filterData() {
-    let filteredData = [...originalData]; // 원본 데이터를 복사
+    let filteredData = [...originalData];
     Object.entries(filters).forEach(([header, values]) => {
         filteredData = filteredData.filter(item => {
             if (['Certification'].includes(header)) {
@@ -134,7 +129,7 @@ function filterData() {
 
 function renderDataTable(data) {
     const dataTable = document.getElementById('data-table');
-    dataTable.innerHTML = ''; // 테이블 초기화
+    dataTable.innerHTML = '';
 
     if (data.length === 0) {
         dataTable.innerHTML = '<p>No data available.</p>';
