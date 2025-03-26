@@ -1,0 +1,269 @@
+:root {
+    --primary-color: #005f9e; /* Tech blue */
+    --secondary-color: #eef4f8; /* Light blue/gray */
+    --accent-color: #00a0e9; /* Brighter blue */
+    --text-color: #333;
+    --border-color: #ccc;
+    --bg-color: #f8f9fa; /* Light background */
+    --header-bg: #ffffff;
+    --table-header-bg: #e9ecef;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--header-bg);
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.8em;
+}
+
+.copyright {
+    font-size: 0.8em;
+    color: #666;
+    margin: 5px 0;
+}
+
+main {
+    padding: 20px 30px;
+}
+
+#filter-section {
+    margin-bottom: 25px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#filter-tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Spacing between tabs */
+    margin-bottom: 15px; /* Space between tabs and selected filters */
+}
+
+.tab-wrapper {
+    position: relative; /* Crucial for positioning the dropdown */
+}
+
+.tab {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500;
+    display: inline-block; /* Ensure it wraps content */
+    white-space: nowrap; /* Prevent tab text wrapping */
+}
+
+.tab:hover, .tab.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.filter-list {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%; /* Position below the tab */
+    left: 0;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px 0;
+    min-width: 180px; /* Minimum width for dropdown */
+    max-height: 250px; /* Max height for the dropdown itself */
+    overflow-y: auto;  /* Scroll within the dropdown if items exceed max-height */
+    z-index: 100; /* Ensure it's above other elements */
+    border-radius: 4px;
+    margin-top: 2px; /* Small gap between tab and list */
+}
+
+.filter-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.filter-list li {
+    padding: 8px 15px 8px 30px; /* Space for checkmark */
+    cursor: pointer;
+    white-space: nowrap; /* Prevent wrapping */
+    position: relative; /* For checkmark positioning */
+    font-size: 0.95em;
+}
+
+.filter-list li:hover {
+    background-color: var(--secondary-color);
+}
+
+.filter-list li.selected {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: 500;
+}
+
+/* Checkmark using Font Awesome (ensure Font Awesome is linked in HTML) */
+.filter-list li.selected::before {
+    content: '\f00c'; /* Font Awesome check icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white; /* Checkmark color on selected */
+}
+/* Alternative text checkmark (if not using Font Awesome) */
+/*
+.filter-list li.selected::before {
+    content: '✓';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+}
+*/
+
+
+#selected-filters-container {
+    margin-top: 15px; /* Space above selected filters */
+    min-height: 30px; /* Ensure space even when empty */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* Spacing between filter tags */
+}
+
+.filter-tag {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 5px 10px 5px 12px; /* More padding on left for circle */
+    border-radius: 15px; /* Rounded pill shape */
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.filter-tag .remove-filter {
+    cursor: pointer;
+    margin-left: 8px;
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: 1;
+    padding: 0 3px;
+    border-radius: 50%; /* Make the 'x' background circular on hover */
+    transition: background-color 0.2s ease;
+}
+
+.filter-tag .remove-filter:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- MODIFIED #table-container --- */
+#table-container {
+    overflow-x: auto; /* Enable horizontal scrolling for the container */
+    background-color: #fff;
+    padding: 0; /* Remove padding if border/shadow provides spacing */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color); /* Add border for visual clarity */
+
+    /* Add max-height and vertical scroll */
+    max-height: 70vh; /* Example: Limit height to 70% of viewport height */
+    overflow-y: auto; /* Enable vertical scrolling within the container */
+    margin-bottom: 20px; /* Add some space below the container */
+}
+/* --- END MODIFIED #table-container --- */
+
+
+#data-table {
+    border-collapse: collapse;
+    width: 100%;
+    /* Remove margin-bottom from table itself, handle spacing on container */
+    /* margin-bottom: 20px; */
+}
+
+#data-table th, #data-table td {
+    border: 1px solid var(--border-color);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.95em;
+    vertical-align: top; /* Align content to top */
+    white-space: nowrap; /* Prevent cell content wrapping - adjust if needed */
+}
+
+/* --- MODIFIED #data-table thead th --- */
+#data-table thead th {
+    background-color: var(--table-header-bg);
+    color: var(--primary-color);
+    font-weight: 600;
+    position: sticky; /* Make header sticky */
+    top: 0;           /* Stick to the top of the scrolling container (#table-container) */
+    z-index: 10;      /* Ensure header stays above table body during scroll */
+    /* Add a bottom border to visually separate header from scrolling content */
+    border-bottom: 2px solid var(--border-color);
+}
+/* --- END MODIFIED #data-table thead th --- */
+
+
+#data-table tbody tr:nth-child(even) {
+    background-color: var(--secondary-color);
+}
+
+#data-table tbody tr:hover {
+    background-color: #dbeaf3; /* Hover effect for rows */
+}
+
+#no-data-message {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+}
+
+
+#additional-info {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 0.9em;
+    color: #555;
+}
+
+#additional-info h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+#additional-info ul {
+    list-style: disc;
+    margin-left: 20px;
+    padding-left: 10px;
+}
+
+#additional-info li {
+    margin-bottom: 5px;
+}
