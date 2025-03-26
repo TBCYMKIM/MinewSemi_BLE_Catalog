@@ -43,7 +43,10 @@ function renderTabs(data) {
         filterList.classList.add('filter-list');
         filterList.style.display = 'none';
 
-        const uniqueValues = [...new Set(data.map(item => item['Chipset Vendor']))];
+        const vendorValues = data
+            .filter(item => item['Chipset Vendor'] === vendor)
+            .map(item => item['Chipset Vendor']);
+        const uniqueValues = [...new Set(vendorValues)];
 
         uniqueValues.forEach(value => {
             const listItem = document.createElement('li');
@@ -57,7 +60,7 @@ function renderTabs(data) {
 
         tab.addEventListener('click', () => {
             const lists = document.querySelectorAll('.filter-list');
-            lists.forEach(list => list.style.display = 'none');
+            lists.forEach(list => list.style.display = 'none';
             filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
         });
 
