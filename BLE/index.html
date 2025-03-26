@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko"> {/* 언어를 ko로 변경하는 것이 좋을 수 있습니다 */}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOBELCO, Inc. – MinewSemi BLE Module Navigator</title>
+    <link rel="stylesheet" href="style.css">
+    {/* Font Awesome 링크가 CSS에서 사용되므로 필요합니다 */}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>TOBELCO, Inc. – MinewSemi BLE Module Navigator</h1>
+        {/* 지식재산권 관련 <p> 태그들을 여기서 삭제합니다 */}
+    </header>
+
+    <main> {/* 주요 콘텐츠를 <main> 태그로 묶는 것이 시맨틱하게 좋습니다 */}
+        <div id="filter-section">
+            <div id="filter-tabs-container">
+                {/* Filter tabs will be generated here by JS */}
+            </div>
+            <div id="selected-filters-container">
+                {/* Selected filter tags will be generated here by JS */}
+            </div>
+        </div>
+
+        <div id="table-container">
+             <table id="data-table">
+                <thead>
+                    {/* Table header will be generated here by JS */}
+                </thead>
+                <tbody>
+                    {/* Table body will be generated here by JS */}
+                </tbody>
+            </table>
+            <p id="no-data-message" style="display: none;">No data available for the selected filters.</p>
+        </div>
+
+
+        <div id="additional-info">
+            <h2>Additional Information</h2>
+            <p><strong>Current Consumption (TX) at Specified dBm:</strong></p>
+            <ul>
+                <li>nRF52840/nRF52833-MS88SFA8, nRF52840/nRF52833-MS88SFB8: PEAK</li>
+                <li>IN610/IN628E-MS56SFB1: current at 10dBm</li>
+                <li>The others: current at 0dBm</li>
+            </ul>
+            <p><strong>Reception Sensitivity:</strong></p>
+            <ul>
+                <li>nRF52810-MS50SFB3: -104~-97 dBm</li>
+            </ul>
+            <p><strong>Max Range:</strong></p>
+            <ul>
+                <li>IN610-MS56SFA1, IN628E-MS56SFA1: 35-80</li>
+                <li>IN610-MS56SFB1, IN628E-MS56SFB1: 180-400</li>
+            </ul>
+        </div>
+    </main> {/* </main> 태그 닫기 */}
+
+    <footer> {/* <footer> 요소 추가 */}
+        {/* 삭제했던 지식재산권 관련 <p> 태그들을 여기에 붙여넣습니다 */}
+        <p class="copyright">Copyright © 2025 TOBELCO, Inc. All rights reserved. This catalog is provided as a web navigator, and all intellectual property rights related to its provision belong to TOBELCO, Inc. Data related to MinewSemi products in this catalog is the property of MinewSemi.</p>
+        <p class="copyright">Copyright © 2025 (주)토벨코. 모든 권리 보유. 본 카탈로그는 웹 내비게이터로 제공되며, 이 도구의 제공과 관련된 지식재산권은 (주)토벨코에 있습니다. 카탈로그에 포함된 MinewSemi 제품 관련 자료의 저작권 및 소유권은 MinewSemi에 있습니다.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
