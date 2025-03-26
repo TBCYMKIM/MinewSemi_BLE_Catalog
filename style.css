@@ -9,33 +9,42 @@ header {
     margin-bottom: 20px;
 }
 
-.filter-tabs {
-    display: flex;
-    justify-content: center;
+#filters {
     margin-bottom: 20px;
 }
 
-.filter-tab {
-    padding: 10px 20px;
-    margin: 0 5px;
+.filter-bar {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ddd;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.filter-list {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    display: none;
+    z-index: 1000;
+}
+
+.filter-list div {
+    padding: 10px;
     cursor: pointer;
 }
 
-.product-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.product-item {
+th, td {
     border: 1px solid #ddd;
-    padding: 15px;
+    padding: 8px;
+    text-align: left;
 }
 
-.product-item h3 {
-    margin-top: 0;
-}
-
-.additional-info {
-    margin-top: 30px;
+th {
+    background-color: #f2f2f2;
 }
