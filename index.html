@@ -1,71 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MinewSemi BLE 카탈로그</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .filter-bar {
-            cursor: pointer;
-            background-color: #e0e0e0;
-            padding: 8px;
-            margin-bottom: 5px;
-            display: inline-block; /* 인라인 블록 요소로 변경 */
-            margin-right: 5px; /* 탭 간 간격 추가 */
-        }
-        .filter-list {
-            display: none;
-            border: 1px solid #ccc;
-            position: absolute; /* 절대 위치로 변경 */
-            background-color: white;
-            z-index: 1;
-        }
-        .filter-list div {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .filter-list div:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <title>Tobelco Catalog - MinewSemi BLE Modules</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="filters"></div>
-    <table id="productTable">
-        <thead>
-            <tr>
-                <th>Chipset Vendor</th>
-                <th>Model Series</th>
-                <th>Model No.</th>
-                <th>Antenna</th>
-                <th>SoCset</th>
-                <th>Max Range (M)</th>
-                <th>Max Length (mm)</th>
-                <th>Mid Length (mm)</th>
-                <th>Min Length (mm)</th>
-                <th>Flash (KB)</th>
-                <th>RAM (KB)</th>
-                <th>Reception Sensitivity (dBm)</th>
-                <th>Transmission Power (min, dBm)</th>
-                <th>Transmission Power (max, dBm)</th>
-                <th>Current (TX, mA)</th>
-                <th>Current (RX, mA)</th>
-                <th>GPIO</th>
-                <th>Certification</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <header>
+        <h1>Tobelco Catalog - MinewSemi BLE Modules</h1>
+    </header>
+
+    <div class="filter-tabs">
+        <button class="filter-tab" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="nRF52840">nRF52840</button>
+        <button class="filter-tab" data-filter="nRF52833">nRF52833</button>
+        <button class="filter-tab" data-filter="IN610">IN610</button>
+        <button class="filter-tab" data-filter="IN628E">IN628E</button>
+        <button class="filter-tab" data-filter="nRF52810">nRF52810</button>
+    </div>
+
+    <div class="product-list">
+        </div>
+
+    <div class="additional-info">
+        <h2>Technical Specifications</h2>
+        <p>Current Consumption (TX) at Specified dBm:</p>
+        <ul>
+            <li>nRF52840/nRF52833-MS88SFA8, nRF52840/nRF52833-MS88SFB8: PEAK</li>
+            <li>IN610/IN628E-MS56SFB1: current at 10dBm</li>
+            <li>The others: current at 0dBm</li>
+        </ul>
+        <p>Reception Sensitivity:</p>
+        <ul>
+            <li>nRF52810-MS50SFB3: -104~-97 dBm</li>
+        </ul>
+        <p>Max Range:</p>
+        <ul>
+            <li>IN610-MS56SFA1, IN628E-MS56SFA1: 35-80</li>
+            <li>IN610-MS56SFB1, IN628E-MS56SFB1: 180-400</li>
+        </ul>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
