@@ -4,7 +4,7 @@ fetch('data.csv')
         const data = parseCSV(csv);
         displayTable(data);
         setupFilters(data);
-        displayAdditionalText(); // 추가 텍스트 표시 함수 호출
+        displayAdditionalText();
     });
 
 function parseCSV(csv) {
@@ -26,6 +26,17 @@ function parseCSV(csv) {
 
 function displayTable(data) {
     const tableBody = document.querySelector('#productTable tbody');
+    const tableHeader = document.querySelector('#productTable thead tr');
+    tableHeader.innerHTML = '';
+
+    if (data.length > 0) {
+        Object.keys(data[0]).forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tableHeader.appendChild(th);
+        });
+    }
+
     tableBody.innerHTML = '';
 
     data.forEach(item => {
@@ -148,52 +159,4 @@ function setupFilters(data) {
     }
 
     function filterTable(data, filters) {
-        let filteredData = data;
-        for (const header in filters) {
-            const filterValue = filters[header];
-            if (typeof filterValue === 'object') {
-                filteredData = filteredData.filter(item => {
-                    const numericValue = parseFloat(item[header]);
-                    return !isNaN(numericValue) && numericValue >= filterValue.min && numericValue <= filterValue.max;
-                });
-            } else {
-                filteredData = filteredData.filter(item => item[header] === filterValue);
-            }
-        }
-        displayTable(filteredData);
-    }
-}
-
-function calculateRanges(values) {
-    const uniqueValues = [...new Set(values)].sort((a, b) => a - b);
-    const ranges = [];
-
-    if (uniqueValues.length <= 3) {
-        uniqueValues.forEach(value => {
-            ranges.push({ min: value, max: value, label: value.toString() });
-        });
-    } else {
-        const middleIndex = Math.floor(uniqueValues.length / 2);
-        const middleValue = uniqueValues[middleIndex];
-        const range1 = { min: Math.min(...uniqueValues), max: middleValue - 1, label: `~ ${middleValue - 1}` };
-        const range2 = { min: middleValue, max: middleValue, label: middleValue.toString() };
-        const range3 = { min: middleValue + 1, max: Math.max(...uniqueValues), label: `${middleValue + 1} ~` };
-        ranges.push(range1, range2, range3);
-    }
-    return ranges;
-}
-
-function filterTableByRange(data, header, min, max) {
-    const filteredData = data.filter(item => {
-        const numericValue = parseFloat(item[header]);
-        return !isNaN(numericValue) && numericValue >= min && numericValue <= max;
-    });
-    displayTable(filteredData);
-}
-
-function displayAdditionalText() {
-    const additionalTextDiv = document.createElement('div');
-    additionalTextDiv.innerHTML = `
-        <p>Current (TX) at Specified dBm:</p>
-        <ul>
-            <li>nRF52840/nRF52833-MS88SFA8, nRF52840/nRF5
+        let filteredData = data
