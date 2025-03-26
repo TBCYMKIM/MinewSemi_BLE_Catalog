@@ -57,7 +57,7 @@ function renderTabs(data) {
 
         tab.addEventListener('click', () => {
             const lists = document.querySelectorAll('.filter-list');
-            lists.forEach(list => list.style.display = 'none';
+            lists.forEach(list => list.style.display = 'none');
             filterList.style.display = filterList.style.display === 'block' ? 'none' : 'block';
         });
 
