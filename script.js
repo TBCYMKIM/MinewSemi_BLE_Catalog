@@ -4,6 +4,7 @@ fetch('data.csv')
         const data = parseCSV(csv);
         displayTable(data);
         setupFilters(data);
+        displayAdditionalText(); // 추가 텍스트 표시 함수 호출
     });
 
 function parseCSV(csv) {
@@ -189,3 +190,10 @@ function filterTableByRange(data, header, min, max) {
     });
     displayTable(filteredData);
 }
+
+function displayAdditionalText() {
+    const additionalTextDiv = document.createElement('div');
+    additionalTextDiv.innerHTML = `
+        <p>Current (TX) at Specified dBm:</p>
+        <ul>
+            <li>nRF52840/nRF52833-MS88SFA8, nRF52840/nRF5
