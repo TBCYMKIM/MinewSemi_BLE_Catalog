@@ -1,0 +1,108 @@
+:root {
+    --primary-color: #005f9e;
+    --secondary-color: #eef4f8;
+    --border-color: #ccc;
+    --text-color: #333;
+    --bg-color: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-size: 16px;
+}
+
+header {
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.7em;
+}
+
+#logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin: 20px 0;
+}
+
+#tobelco-logo,
+#minewsemi-logo {
+    max-height: 60px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
+}
+
+header p {
+     margin-top: 0;
+     font-size: 1em;
+     color: #555;
+}
+
+
+#product-category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 15px 10px;
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-link {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.95em;
+}
+
+.tab-link:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+#main-content {
+    flex-grow: 1;
+    padding: 20px 30px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
+    background-color: #e9ecef;
+    color: #666;
+    font-size: 0.9em;
+    border-top: 1px solid var(--border-color);
+}
+
+footer .copyright {
+    font-size: 0.9em;
+    color: #666;
+    margin: 8px 0;
+    line-height: 1.5;
+}
