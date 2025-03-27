@@ -74,7 +74,7 @@ main { padding: 20px 30px; }
 .filter-list {
     display: none; position: absolute; top: 100%; left: 0; background-color: white;
     border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 5px 0; min-width: 180px; max-height: 150px; /* --- 필터 목록 높이 복원 --- */
+    padding: 5px 0; min-width: 180px; max-height: 240px; /* --- 필터 목록 높이 복원 --- */
     overflow-y: auto; z-index: 100; border-radius: 4px; margin-top: 2px;
 }
 .filter-list ul { list-style: none; padding: 0; margin: 0; }
