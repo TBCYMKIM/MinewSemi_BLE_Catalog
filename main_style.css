@@ -1,0 +1,124 @@
+:root {
+    --primary-color: #005f9e;
+    --secondary-color: #eef4f8;
+    --border-color: #ccc;
+    --text-color: #333;
+    --bg-color: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-size: 16px;
+}
+
+header {
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.7em;
+}
+
+#logo-container {
+    display: flex;
+    justify-content: center; /* 로고들을 가운데 정렬 */
+    align-items: center;
+    gap: 5%; /* 로고 사이 간격 (너비의 5%) */
+    width: 90%; /* 컨테이너 너비를 화면의 90%로 제한 */
+    margin: 20px auto; /* 위아래 여백 및 자동 좌우 마진으로 가운데 정렬 */
+}
+
+#tobelco-logo,
+#minewsemi-logo {
+    flex: 1; /* 사용 가능한 공간을 동일하게 나눠 가짐 */
+    max-width: 45%; /* 각 로고가 컨테이너 너비의 최대 45%까지만 차지하도록 제한 */
+    height: auto; /* 비율 유지 */
+    object-fit: contain; /* 이미지가 영역에 맞게 축소되도록 함 */
+}
+
+header p {
+     margin-top: 0;
+     font-size: 1em;
+     color: #555;
+}
+
+
+#product-category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 15px 10px;
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-link {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.95em;
+}
+
+.tab-link:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+#main-content {
+    flex-grow: 1;
+    padding: 20px 30px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
+    background-color: #e9ecef;
+    color: #666;
+    font-size: 0.9em;
+    border-top: 1px solid var(--border-color);
+}
+
+footer .copyright {
+    font-size: 0.9em;
+    color: #666;
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+/* 작은 화면에서 로고 세로 배치 */
+@media (max-width: 600px) {
+    #logo-container {
+        flex-direction: column; /* 세로로 쌓기 */
+        width: 70%; /* 컨테이너 너비 줄이기 */
+        gap: 20px; /* 세로 간격 */
+    }
+
+    #tobelco-logo,
+    #minewsemi-logo {
+        max-width: 80%; /* 세로로 쌓였을 때 너비 조정 */
+        flex: none; /* flex 비율 제거 */
+    }
+}
