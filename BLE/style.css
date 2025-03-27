@@ -139,7 +139,7 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 5px 0;
     min-width: 180px;
-    max-height: 80px; /* --- 필터 목록 높이 80px로 수정 --- */
+    max-height: 250px; /* --- 필터 목록 높이 80px로 수정 --- */
     overflow-y: auto;
     z-index: 100;
     border-radius: 4px;
@@ -222,7 +222,7 @@ main {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid var(--border-color);
-    max-height: 50vh; /* --- 데이터 테이블 높이 50vh 유지 --- */
+    max-height: 40vh; /* --- 데이터 테이블 높이 50vh 유지 --- */
     overflow-y: auto;
     margin-bottom: 20px;
     position: relative;
