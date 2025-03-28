@@ -34,19 +34,27 @@
              <div id="initial-message">
                 <p>상단 필터에서 원하시는 사양을 선택하시면 제품 목록이 표시됩니다.</p>
              </div>
-             <table id="data-table" style="display: none;">
-                <thead>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <p id="no-data-message" style="display: none;">선택하신 조건에 맞는 제품이 없습니다.</p>
+
+             <div id="sticky-header-row" style="display: none;">
+                 <!-- JS will populate this -->
+             </div>
+             <div id="scrollable-data-area" style="display: none;">
+                 <table id="data-table">
+                     <!-- No THEAD here -->
+                     <tbody>
+                         <!-- JS will populate this -->
+                     </tbody>
+                 </table>
+             </div>
+
+             <p id="no-data-message" style="display: none;">선택하신 조건에 맞는 제품이 없습니다.</p>
         </div>
 
         <div id="comparison-section" style="display: none;">
              <h2>Product Comparison</h2>
              <div id="comparison-container">
-                 </div>
+                 <!-- JS will populate this -->
+             </div>
         </div>
 
 

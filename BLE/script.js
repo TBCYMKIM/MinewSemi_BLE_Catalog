@@ -245,44 +245,71 @@ function filterData() {
     return filteredData;
 }
 
+// --- MODIFIED renderDataTable function ---
 function renderDataTable(data) {
-    const table = document.getElementById('data-table'), thead = table.tHead, tbody = table.tBodies[0];
+    const tableContainer = document.getElementById('table-container');
+    const stickyHeaderRow = document.getElementById('sticky-header-row');
+    const scrollableDataArea = document.getElementById('scrollable-data-area');
+    const table = document.getElementById('data-table');
+    const tbody = table.tBodies[0];
     const initialMsg = document.getElementById('initial-message');
     const noDataMsg = document.getElementById('no-data-message');
 
-    if (!table || !thead || !tbody || !initialMsg || !noDataMsg) return;
+    if (!tableContainer || !stickyHeaderRow || !scrollableDataArea || !table || !tbody || !initialMsg || !noDataMsg) {
+        console.error("Required elements not found for renderDataTable");
+        return;
+    }
 
-    thead.innerHTML = ''; tbody.innerHTML = '';
+    stickyHeaderRow.innerHTML = '';
+    tbody.innerHTML = '';
 
     const hasActiveFilters = Object.keys(filters).some(key => filters[key].length > 0);
 
     if (!hasActiveFilters) {
-        table.style.display = 'none';
-        noDataMsg.style.display = 'none';
         initialMsg.style.display = 'block';
+        stickyHeaderRow.style.display = 'none';
+        scrollableDataArea.style.display = 'none';
+        noDataMsg.style.display = 'none';
+        // Hide the underlying table structure as well if using table-layout: fixed later
+        table.style.display = 'none';
         return;
     }
 
     initialMsg.style.display = 'none';
 
     if (data.length === 0) {
-        table.style.display = 'none';
         noDataMsg.style.display = 'block';
+        stickyHeaderRow.style.display = 'none';
+        scrollableDataArea.style.display = 'none';
+        table.style.display = 'none';
         return;
     }
 
-    table.style.display = '';
+    stickyHeaderRow.style.display = 'flex';
+    scrollableDataArea.style.display = 'block';
+    table.style.display = ''; // Make sure table is visible
     noDataMsg.style.display = 'none';
 
-    const hr = thead.insertRow();
-    const thDetails = document.createElement('th'); thDetails.textContent = 'Compare'; hr.appendChild(thDetails);
-    csvHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th); });
+    const headerCellCompare = document.createElement('div');
+    headerCellCompare.className = 'header-cell compare-column';
+    headerCellCompare.textContent = 'Compare';
+    stickyHeaderRow.appendChild(headerCellCompare);
+
+    csvHeaders.forEach(headerText => {
+        const headerCell = document.createElement('div');
+        headerCell.className = 'header-cell';
+        headerCell.textContent = headerText;
+        const className = headerText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        headerCell.classList.add(`col-${className}`);
+        stickyHeaderRow.appendChild(headerCell);
+    });
 
     data.forEach(item => {
         const r = tbody.insertRow();
-        const cellDetails = r.insertCell();
-        const btn = document.createElement('button');
 
+        const cellDetails = r.insertCell();
+        cellDetails.className = 'compare-column';
+        const btn = document.createElement('button');
         const modelNo = item['Model No.'];
         const socSet = item['SoCset'];
         const uniqueId = `${modelNo}__${socSet}`;
@@ -303,9 +330,16 @@ function renderDataTable(data) {
             btn.className = 'details-button';
         }
         cellDetails.appendChild(btn);
-        csvHeaders.forEach(h => { r.insertCell().textContent = (item[h] ?? ''); });
+
+        csvHeaders.forEach(headerKey => {
+            const cell = r.insertCell();
+            cell.textContent = (item[headerKey] ?? '');
+            const className = headerKey.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            cell.classList.add(`col-${className}`);
+        });
     });
 }
+// --- END OF MODIFIED renderDataTable ---
 
 function handleDetailsClick(event) {
     const button = event.target;

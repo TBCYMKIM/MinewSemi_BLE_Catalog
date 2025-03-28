@@ -9,7 +9,8 @@
     --table-header-bg: #e9ecef;
     --remove-color: #dc3545;
     --remove-hover-color: #c82333;
-    --comparison-h2-height: 58px; /* H2 높이 변수 (정확한 값으로 수정 필요) */
+    --comparison-h2-height: 58px;
+    --compare-col-width: 85px;
 }
 
 body {
@@ -105,19 +106,100 @@ main { padding: 20px 30px; }
 }
 .filter-tag .remove-filter:hover { background-color: rgba(255, 255, 255, 0.3); }
 
-/* --- Data Table --- */
 #table-container {
-    overflow: auto;
     background-color: #fff;
     padding: 0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid var(--border-color);
-    max-height: 40vh;
     margin-bottom: 20px;
     position: relative;
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
+#no-data-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #777; font-style: italic; background-color: var(--secondary-color); }
+
+#sticky-header-row {
+    display: flex;
+    position: sticky;
+    top: 0;
+    background-color: var(--table-header-bg);
+    z-index: 10;
+    border-bottom: 2px solid var(--border-color);
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.header-cell {
+    padding: 9px 11px;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: left;
+    font-size: 0.9em;
+    white-space: nowrap;
+    border-right: 1px solid var(--border-color);
+    flex-grow: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+}
+.header-cell:last-child {
+    border-right: none;
+    flex-grow: 1;
+}
+.header-cell.compare-column {
+    flex-basis: var(--compare-col-width);
+    text-align: center;
+    min-width: var(--compare-col-width);
+    justify-content: center;
+}
+/* Define widths for other header cells based on expected content */
+.header-cell.col-chipset-vendor,
+.header-cell.col-model-series,
+.header-cell.col-model-no,
+.header-cell.col-antenna,
+.header-cell.col-socset {
+    flex-basis: 130px; /* Adjust as needed */
+    min-width: 100px;
+}
+.header-cell.col-max-range-m,
+.header-cell.col-max-length-mm,
+.header-cell.col-mid-length-mm,
+.header-cell.col-min-length-mm,
+.header-cell.col-flash-kb,
+.header-cell.col-ram-kb,
+.header-cell.col-reception-sensitivity-dbm,
+.header-cell.col-transmission-power-min-dbm,
+.header-cell.col-transmission-power-max-dbm,
+.header-cell.col-current-tx-ma,
+.header-cell.col-current-rx-ma,
+.header-cell.col-gpio {
+    flex-basis: 100px; /* Adjust as needed */
+    min-width: 80px;
+    text-align: right;
+    justify-content: flex-end;
+}
+.header-cell.col-certification {
+    flex-basis: 250px;
+    min-width: 200px;
+    white-space: normal; /* Allow wrap */
+    flex-grow: 1; /* Allow to take remaining space */
+}
+
+
+#scrollable-data-area {
+    max-height: 40vh;
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+    z-index: 1;
+    background-color: white;
+    width: 100%;
+    box-sizing: border-box;
+}
 
 #data-table {
     border-collapse: collapse;
@@ -125,68 +207,88 @@ main { padding: 20px 30px; }
     border-spacing: 0;
     margin: 0;
     padding: 0;
+    border-top: none;
+    table-layout: fixed; /* Use fixed layout for better width control */
 }
 
-#data-table thead {
-    background-color: var(--table-header-bg);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    /* Issue 1: Use shadow for visual separation instead of relying on perfect border alignment */
-    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.15);
-}
-#data-table tbody {
-    position: relative;
-    z-index: 1;
+#data-table colgroup col {
+    /* Define column widths here if using colgroup */
 }
 
-#data-table thead tr {
-    margin: 0;
-    padding: 0;
-}
-#data-table th, #data-table td {
-    border: 1px solid var(--border-color); padding: 9px 11px; text-align: left;
-    font-size: 0.9em; vertical-align: top; white-space: nowrap;
-}
-#data-table thead th {
-    background-color: var(--table-header-bg);
-    color: var(--primary-color); font-weight: 600;
-    position: sticky;
-    top: 0;
-    border-bottom-width: 1px; /* Reduce bottom border if shadow is used */
-    vertical-align: middle; /* Try middle instead of bottom */
-    background-clip: padding-box;
-}
-#data-table thead th:first-child { width: 70px; text-align: center; }
+#data-table tbody { }
 
-#data-table tbody td {
+#data-table td {
+    border: 1px solid var(--border-color);
+    border-left: none;
+    border-top: none;
+    padding: 9px 11px;
     text-align: left;
+    font-size: 0.9em;
+    vertical-align: top;
+    white-space: nowrap;
     background-color: #fff;
+    overflow: hidden; /* Prevent content overflow */
+    text-overflow: ellipsis; /* Add ellipsis if text overflows */
+    box-sizing: border-box;
 }
-#data-table tbody td:first-child {
+#data-table td:first-child {
+    border-left: none;
+}
+#data-table td.compare-column {
+    width: var(--compare-col-width);
     text-align: center;
+    white-space: normal; /* Allow button wrap if needed */
 }
+/* Match widths defined for header cells */
+#data-table td.col-chipset-vendor,
+#data-table td.col-model-series,
+#data-table td.col-model-no,
+#data-table td.col-antenna,
+#data-table td.col-socset {
+    width: 130px;
+}
+#data-table td.col-max-range-m,
+#data-table td.col-max-length-mm,
+#data-table td.col-mid-length-mm,
+#data-table td.col-min-length-mm,
+#data-table td.col-flash-kb,
+#data-table td.col-ram-kb,
+#data-table td.col-reception-sensitivity-dbm,
+#data-table td.col-transmission-power-min-dbm,
+#data-table td.col-transmission-power-max-dbm,
+#data-table td.col-current-tx-ma,
+#data-table td.col-current-rx-ma,
+#data-table td.col-gpio {
+    width: 100px;
+    text-align: right;
+}
+#data-table td.col-certification {
+    width: 250px;
+    white-space: normal; /* Allow wrap */
+}
+
+
+#data-table tbody tr:first-child td {
+    border-top: 1px solid var(--border-color);
+}
+
 #data-table tbody tr:nth-child(even) td {
     background-color: var(--secondary-color);
 }
 #data-table tbody tr:hover td {
     background-color: #dbeaf3;
 }
-#no-data-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #777; font-style: italic; background-color: var(--secondary-color); }
 
-
-/* --- Comparison Section --- */
 #comparison-section {
     margin-top: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid var(--border-color);
     padding: 0;
-    max-height: 80vh;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: visible;
     position: relative;
     background-color: white;
-    /* transform: translateZ(0); Remove from parent */
 }
 
 #comparison-section h2 {
@@ -199,6 +301,7 @@ main { padding: 20px 30px; }
     box-sizing: border-box;
     position: sticky;
     top: 0;
+    left: 0;
     background-color: white;
     z-index: 10;
     display: flex;
@@ -209,11 +312,10 @@ main { padding: 20px 30px; }
     display: flex;
     gap: 0;
     width: max-content;
-    padding: 15px 0 15px 0; /* T, R, B, L - Remove right padding */
+    padding: 15px 0 15px 0;
     background-color: white;
 }
 
-/* Issue 2 Fix: Apply transform hack directly */
 .comparison-specs {
     flex: 0 0 auto;
     width: 200px;
@@ -221,9 +323,9 @@ main { padding: 20px 30px; }
     position: sticky;
     left: 0;
     background-color: var(--bg-color);
-    z-index: 5; /* Spec names highest among scrolling content */
+    z-index: 5;
     border-right: 2px solid var(--border-color);
-    transform: translateZ(0); /* Force layer */
+    transform: translateZ(0);
 }
 
 .comparison-specs .spec-sticky-header,
@@ -233,7 +335,7 @@ main { padding: 20px 30px; }
 }
 
 .comparison-specs div > div {
-    padding: 6px 0 6px 10px; /* Left padding added */
+    padding: 6px 0 6px 10px;
     font-weight: 600; color: var(--primary-color);
     font-size: 0.85em;
     word-break: break-word;
@@ -254,7 +356,7 @@ main { padding: 20px 30px; }
     width: 220px;
     border-left: 1px solid var(--border-color);
     padding-left: 20px;
-    padding-right: 15px; /* Keep right padding for spacing between products */
+    padding-right: 15px;
     position: relative;
     background-color: #fff;
 }
@@ -262,15 +364,10 @@ main { padding: 20px 30px; }
     border-left: none;
 }
 
-/* Issue 2 Fix: Apply transform hack directly */
 .comparison-product-sticky {
-    position: sticky;
-    top: var(--comparison-h2-height);
-    background-color: white; /* Crucial: Must be solid */
-    z-index: 4; /* Below specs */
+    background-color: white;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
-    transform: translateZ(0); /* Force layer */
 }
 
 .comparison-product-sticky div {
