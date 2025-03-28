@@ -453,7 +453,6 @@ function renderComparisonView() {
                         tableButton.textContent = 'Add';
                         tableButton.className = 'details-button';
                         tableButton.disabled = false;
-                        tableButton.style.backgroundColor = '';
                         tableButton.removeEventListener('click', handleRemoveFromTableClick);
                         tableButton.addEventListener('click', handleDetailsClick);
                     }

@@ -115,12 +115,13 @@ main { padding: 20px 30px; }
     font-size: 0.9em; vertical-align: top; white-space: nowrap;
 }
 #data-table thead th {
-    background-color: var(--table-header-bg);
+    background-color: var(--table-header-bg); /* 배경색 필수 */
     color: var(--primary-color); font-weight: 600;
     position: sticky;
     top: 0; /* 컨테이너 상단에 고정 */
     z-index: 10; /* tbody 내용보다 위에 오도록 */
     border-bottom: 2px solid var(--border-color);
+    outline: 1px solid var(--table-header-bg); /* 경계선 겹침 방지 트릭 */
 }
 #data-table thead th:first-child { width: 70px; text-align: center; }
 #data-table tbody td:first-child { text-align: center; }
@@ -131,7 +132,7 @@ main { padding: 20px 30px; }
 #comparison-section {
     margin-top: 30px; background-color: #fff; border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
-    padding: 0; /* 내부 컨테이너에서 패딩 관리 */
+    padding: 0;
     max-height: 80vh;
     overflow: auto;
     position: relative;
@@ -143,16 +144,16 @@ main { padding: 20px 30px; }
     border-bottom: 1px solid var(--border-color);
     font-size: 1.4em;
     position: sticky;
-    top: 0; /* 섹션 스크롤 시 상단 고정 */
-    background-color: white; /* 배경색 지정 */
-    z-index: 4; /* 가장 높게 */
+    top: 0;
+    background-color: white;
+    z-index: 4;
 }
 
 #comparison-container {
     display: flex;
     gap: 0;
     width: max-content;
-    padding: 15px; /* 컨테이너 내부에 패딩 추가 */
+    padding: 15px; /* 컨테이너 내부 패딩 */
 }
 
 .comparison-specs {
@@ -160,9 +161,9 @@ main { padding: 20px 30px; }
     width: 200px;
     padding-right: 15px;
     position: sticky;
-    left: 0; /* 컨테이너의 왼쪽에 붙임 */
-    background-color: var(--bg-color); /* 배경색 지정 */
-    z-index: 3; /* 제품 열보다 높게 */
+    left: 0; /* 컨테이너 패딩 고려 안 함 (컨테이너 기준 0) */
+    background-color: var(--bg-color);
+    z-index: 3;
     border-right: 2px solid var(--border-color);
 }
 
