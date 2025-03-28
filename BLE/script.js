@@ -315,14 +315,11 @@ function handleDetailsClick(event) {
     if (!viewedProductIds.has(uniqueId)) {
         viewedProductIds.add(uniqueId);
         renderComparisonView();
-        // Change button to Remove
         button.textContent = 'Remove';
-        button.classList.remove('details-button');
-        button.classList.add('remove-from-table-btn');
+        button.className = 'remove-from-table-btn';
         button.removeEventListener('click', handleDetailsClick);
         button.addEventListener('click', handleRemoveFromTableClick);
     } else {
-         // If already added, just scroll to it in comparison view
          const comparisonProductCol = document.querySelector(`.comparison-product[data-unique-id="${uniqueId}"]`);
          if (comparisonProductCol) {
              comparisonProductCol.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
@@ -341,10 +338,8 @@ function handleRemoveFromTableClick(event) {
     if (viewedProductIds.has(uniqueId)) {
         viewedProductIds.delete(uniqueId);
         renderComparisonView();
-        // Change button back to Add
         button.textContent = 'Add';
-        button.classList.remove('remove-from-table-btn');
-        button.classList.add('details-button');
+        button.className = 'details-button';
         button.removeEventListener('click', handleRemoveFromTableClick);
         button.addEventListener('click', handleDetailsClick);
     }
@@ -456,10 +451,9 @@ function renderComparisonView() {
                     const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"], .remove-from-table-btn[data-unique-id="${uniqueId}"]`);
                     if(tableButton) {
                         tableButton.textContent = 'Add';
-                        tableButton.className = 'details-button'; // Reset class
+                        tableButton.className = 'details-button';
                         tableButton.disabled = false;
                         tableButton.style.backgroundColor = '';
-                        // Re-attach correct listener
                         tableButton.removeEventListener('click', handleRemoveFromTableClick);
                         tableButton.addEventListener('click', handleDetailsClick);
                     }

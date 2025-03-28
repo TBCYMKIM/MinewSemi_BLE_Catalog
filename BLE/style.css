@@ -76,7 +76,7 @@ main { padding: 20px 30px; }
 .filter-list {
     display: none; position: absolute; top: 100%; left: 0; background-color: white;
     border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 5px 0; min-width: 180px; max-height: 240px; /* --- 필터 목록 높이 240px --- */
+    padding: 5px 0; min-width: 180px; max-height: 150px;
     overflow-y: auto; z-index: 100; border-radius: 4px; margin-top: 2px;
 }
 .filter-list ul { list-style: none; padding: 0; margin: 0; }
@@ -115,8 +115,12 @@ main { padding: 20px 30px; }
     font-size: 0.9em; vertical-align: top; white-space: nowrap;
 }
 #data-table thead th {
-    background-color: var(--table-header-bg); color: var(--primary-color); font-weight: 600;
-    position: sticky; top: 0; z-index: 10; border-bottom: 2px solid var(--border-color);
+    background-color: var(--table-header-bg); /* --- 배경색 확인 --- */
+    color: var(--primary-color); font-weight: 600;
+    position: sticky;
+    top: 0; /* --- 컨테이너 상단에 고정 --- */
+    z-index: 10; /* --- tbody 내용보다 위에 오도록 --- */
+    border-bottom: 2px solid var(--border-color);
 }
 #data-table thead th:first-child { width: 70px; text-align: center; }
 #data-table tbody td:first-child { text-align: center; }
@@ -133,14 +137,14 @@ main { padding: 20px 30px; }
     position: relative;
 }
 #comparison-section h2 {
-    margin: 0; /* --- 기본 마진 제거 --- */
-    padding: 15px; /* --- 패딩으로 대체 --- */
+    margin: 0;
+    padding: 15px;
     color: var(--primary-color);
     border-bottom: 1px solid var(--border-color);
     font-size: 1.4em;
-    position: sticky; /* --- 섹션 제목도 고정 --- */
-    top: 0;
-    background-color: white;
+    position: sticky;
+    top: 0; /* --- 섹션 스크롤 시 상단 고정 --- */
+    background-color: white; /* --- 배경색 지정 --- */
     z-index: 4; /* --- 가장 높게 --- */
 }
 
@@ -157,8 +161,8 @@ main { padding: 20px 30px; }
     padding-right: 15px;
     position: sticky;
     left: 15px; /* --- 컨테이너 패딩만큼 띄움 --- */
-    background-color: var(--bg-color);
-    z-index: 3;
+    background-color: var(--bg-color); /* 배경색 지정 */
+    z-index: 3; /* 제품 열보다 높게 */
     border-right: 2px solid var(--border-color);
 }
 
@@ -191,14 +195,14 @@ main { padding: 20px 30px; }
     padding-right: 15px;
     position: relative;
 }
-.comparison-product:first-of-type { border-left: none; margin-left: 15px; /* 스펙 열 너비 + 패딩 만큼 띄움 */}
+.comparison-product:first-of-type { border-left: none; margin-left: 15px; }
 
 
 .comparison-product-sticky {
     position: sticky;
     top: 0; /* --- comparison-section 스크롤 기준 상단 고정 --- */
-    background-color: white;
-    z-index: 2;
+    background-color: white; /* 배경색 확실히 지정 */
+    z-index: 2; /* 스크롤 영역보다는 높게, 스펙 열보다는 낮게 */
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -212,9 +216,9 @@ main { padding: 20px 30px; }
 .comparison-product-sticky div.value-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .comparison-product-scrollable {
-     background-color: white;
+     background-color: white; /* 배경색 지정 */
      position: relative;
-     z-index: 1;
+     z-index: 1; /* sticky 헤더보다 낮게 */
 }
 
 .comparison-product-scrollable div {
