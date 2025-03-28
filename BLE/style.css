@@ -161,7 +161,7 @@ main { padding: 20px 30px; }
 .comparison-specs div > div {
     padding: 6px 0; font-weight: 600; color: var(--primary-color);
     font-size: 0.85em;
-    word-break: break-word;
+    word-break: break-word; /* 스펙 이름 줄바꿈 허용 */
     height: 40px;
     display: flex; align-items: center;
     border-bottom: 1px solid var(--secondary-color);
@@ -187,7 +187,7 @@ main { padding: 20px 30px; }
 .comparison-product-sticky {
     position: sticky;
     top: 0;
-    background-color: white; /* 배경색 지정 */
+    background-color: white; /* 배경색 확실히 지정 */
     z-index: 2; /* 스펙 열보다는 낮게 */
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);

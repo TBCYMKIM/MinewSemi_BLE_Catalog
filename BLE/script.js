@@ -386,7 +386,7 @@ function renderComparisonView() {
     stickySpecHeaderDiv.className = 'spec-sticky-header';
     stickySpecs.forEach(spec => {
         const specNameDiv = document.createElement('div');
-        specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':';
+        specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':'; // Image 레이블 제거
         stickySpecHeaderDiv.appendChild(specNameDiv);
     });
     specsDiv.appendChild(stickySpecHeaderDiv);
