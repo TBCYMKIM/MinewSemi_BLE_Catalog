@@ -9,6 +9,7 @@
     --table-header-bg: #e9ecef;
     --remove-color: #dc3545;
     --remove-hover-color: #c82333;
+    --comparison-h2-height: 58px; /* Define H2 height as variable for consistency */
 }
 
 body {
@@ -113,7 +114,19 @@ main { padding: 20px 30px; }
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
 #data-table { border-collapse: collapse; width: 100%; }
-#data-table thead, #data-table thead tr {
+
+/* Issue 1 Fix: Add background to thead, ensure tbody is below */
+#data-table thead {
+    background-color: var(--table-header-bg); /* Ensure thead itself has background */
+    position: relative; /* Needed for z-index */
+    z-index: 10; /* Keep header above */
+}
+#data-table tbody {
+    position: relative; /* Needed for z-index */
+    z-index: 1; /* Ensure tbody is below thead */
+}
+
+#data-table thead tr { /* Reset just in case */
     margin: 0;
     padding: 0;
 }
@@ -122,27 +135,27 @@ main { padding: 20px 30px; }
     font-size: 0.9em; vertical-align: top; white-space: nowrap;
 }
 #data-table thead th {
-    background-color: var(--table-header-bg);
+    background-color: var(--table-header-bg); /* Reconfirm background */
     color: var(--primary-color); font-weight: 600;
     position: sticky;
     top: 0;
-    z-index: 10;
+    /* z-index already handled by thead */
     border-bottom: 2px solid var(--border-color);
 }
 #data-table thead th:first-child { width: 70px; text-align: center; }
-/* Issue 1 Fix: Add explicit background to tbody cells */
+
 #data-table tbody td {
-    text-align: left; /* Revert potential center align */
-    background-color: #fff; /* Default white background */
+    text-align: left;
+    background-color: #fff; /* Default white background for all cells */
 }
 #data-table tbody td:first-child {
-    text-align: center; /* Keep first cell centered */
+    text-align: center;
 }
 #data-table tbody tr:nth-child(even) td {
-    background-color: var(--secondary-color); /* Override for even rows */
+    background-color: var(--secondary-color); /* Override for even row cells */
 }
 #data-table tbody tr:hover td {
-    background-color: #dbeaf3; /* Hover affects all cells in the row */
+    background-color: #dbeaf3; /* Hover affects all cells */
 }
 #no-data-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #777; font-style: italic; background-color: var(--secondary-color); }
 
@@ -163,25 +176,22 @@ main { padding: 20px 30px; }
     color: var(--primary-color);
     border-bottom: 1px solid var(--border-color);
     font-size: 1.4em;
-    /* Calculate exact height using dev tools. Example: */
-    /* line-height: normal (~1.2) -> 1.4em * 1.2 = 1.68em */
-    /* Total height = padding-top + content height + padding-bottom + border */
-    /* Approx = 15px + (1.68 * 16px) + 15px + 1px = ~58px */
-    height: 58px; /* Use measured height */
-    box-sizing: border-box; /* Include padding and border in height */
+    height: var(--comparison-h2-height); /* Use variable */
+    box-sizing: border-box;
     position: sticky;
     top: 0;
     background-color: white;
     z-index: 4;
-    display: flex; /* To vertically center if needed */
-    align-items: center; /* Vertically center text */
+    display: flex;
+    align-items: center;
 }
 
 #comparison-container {
     display: flex;
     gap: 0;
     width: max-content;
-    padding: 15px 15px 15px 0;
+    padding: 15px 15px 15px 0; /* T, R, B, L */
+    background-color: #fff; /* Add background to container */
 }
 
 .comparison-specs {
@@ -190,9 +200,10 @@ main { padding: 20px 30px; }
     padding-right: 20px;
     position: sticky;
     left: 0;
-    background-color: var(--bg-color);
+    background-color: var(--bg-color); /* Use distinct background for spec names */
     z-index: 3;
     border-right: 2px solid var(--border-color);
+    /* transform: translateZ(0); Remove this */
 }
 
 .comparison-specs .spec-sticky-header,
@@ -206,6 +217,7 @@ main { padding: 20px 30px; }
     height: 40px;
     display: flex; align-items: center;
     border-bottom: 1px solid var(--secondary-color);
+    background-color: transparent; /* Ensure spec names don't have interfering background */
 }
 .comparison-specs div > div:last-child { border-bottom: none; }
 
@@ -220,37 +232,38 @@ main { padding: 20px 30px; }
     border-left: 1px solid var(--border-color);
     padding-left: 20px;
     padding-right: 15px;
-    position: relative;
-    background-color: #fff; /* Issue 3 Fix: Add background to the column */
+    position: relative; /* Keep for context */
+    background-color: #fff; /* Ensure column has solid background */
+    /* transform: translateZ(0); Remove this */
 }
 .comparison-product:first-of-type {
     border-left: none;
 }
 
-/* Issue 2 Fix: Adjust top based on measured h2 height */
+/* Issue 2 Fix: Fine-tune top value */
 .comparison-product-sticky {
     position: sticky;
-    top: 58px; /* Should match the exact height of h2 */
-    background-color: white;
+    top: var(--comparison-h2-height); /* Use variable, adjust value in :root if needed */
+    background-color: white; /* Ensure solid background */
     z-index: 2;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
-    /* Issue 3 Fix: Promote to own layer */
-    transform: translateZ(0);
+    /* transform: translateZ(0); Remove this */
 }
 
 .comparison-product-sticky div {
     padding: 6px 0; font-size: 0.85em; word-break: break-word;
     display: flex; align-items: center; justify-content: center; text-align: center;
+    background-color: white; /* Ensure inner divs also have background */
 }
 .comparison-product-sticky div.value-action { height: 40px; }
 .comparison-product-sticky div.value-image { height: 150px; }
 .comparison-product-sticky div.value-image img { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.3s ease; }
 
 .comparison-product-scrollable {
-     /* background-color: white; No longer strictly needed if .comparison-product has it */
      position: relative;
      z-index: 1;
+     background-color: white; /* Ensure scrollable part has background */
 }
 
 .comparison-product-scrollable div {
@@ -258,6 +271,7 @@ main { padding: 20px 30px; }
     height: 40px;
     display: flex; align-items: center; justify-content: center;
     text-align: center; border-bottom: 1px solid var(--secondary-color);
+    background-color: white; /* Ensure inner divs also have background */
 }
 .comparison-product-scrollable div:last-child { border-bottom: none; }
 .comparison-product-scrollable div.value-inquiry { height: 50px; }
