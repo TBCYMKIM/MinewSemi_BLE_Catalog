@@ -9,7 +9,7 @@
     --table-header-bg: #e9ecef;
     --remove-color: #dc3545;
     --remove-hover-color: #c82333;
-    --comparison-h2-height: 58px; /* H2 높이 변수 */
+    --comparison-h2-height: 58px; /* H2 높이 변수 (정확한 값으로 수정 필요) */
 }
 
 body {
@@ -19,7 +19,6 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     font-size: 16px;
-    /* Prevent potential horizontal scrollbar caused by borders/padding */
     overflow-x: hidden;
 }
 
@@ -108,26 +107,33 @@ main { padding: 20px 30px; }
 
 /* --- Data Table --- */
 #table-container {
-    overflow-x: auto; background-color: #fff; padding: 0;
+    overflow: auto;
+    background-color: #fff;
+    padding: 0;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
-    max-height: 40vh; overflow-y: auto;
-    margin-bottom: 20px; position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+    max-height: 40vh;
+    margin-bottom: 20px;
+    position: relative;
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
 
-/* Issue 3: Add border-spacing */
 #data-table {
     border-collapse: collapse;
     width: 100%;
-    border-spacing: 0; /* Explicitly remove spacing */
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #data-table thead {
     background-color: var(--table-header-bg);
-    position: sticky; /* Make thead sticky itself, not just th */
+    position: sticky;
     top: 0;
     z-index: 10;
+    /* Issue 1: Use shadow for visual separation instead of relying on perfect border alignment */
+    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.15);
 }
 #data-table tbody {
     position: relative;
@@ -145,11 +151,11 @@ main { padding: 20px 30px; }
 #data-table thead th {
     background-color: var(--table-header-bg);
     color: var(--primary-color); font-weight: 600;
-    position: sticky; /* Keep sticky on TH as well for column locking potentially */
+    position: sticky;
     top: 0;
-    border-bottom: 2px solid var(--border-color);
-    /* Issue 3: Try vertical-align */
-    vertical-align: bottom;
+    border-bottom-width: 1px; /* Reduce bottom border if shadow is used */
+    vertical-align: middle; /* Try middle instead of bottom */
+    background-clip: padding-box;
 }
 #data-table thead th:first-child { width: 70px; text-align: center; }
 
@@ -171,13 +177,16 @@ main { padding: 20px 30px; }
 
 /* --- Comparison Section --- */
 #comparison-section {
-    margin-top: 30px; background-color: #fff; border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
+    margin-top: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
     padding: 0;
     max-height: 80vh;
     overflow: auto;
     position: relative;
-    background-color: white; /* Ensure section itself has solid background */
+    background-color: white;
+    /* transform: translateZ(0); Remove from parent */
 }
 
 #comparison-section h2 {
@@ -191,7 +200,7 @@ main { padding: 20px 30px; }
     position: sticky;
     top: 0;
     background-color: white;
-    z-index: 10; /* Increase H2 z-index */
+    z-index: 10;
     display: flex;
     align-items: center;
 }
@@ -200,10 +209,11 @@ main { padding: 20px 30px; }
     display: flex;
     gap: 0;
     width: max-content;
-    padding: 15px 15px 15px 0; /* T, R, B, L */
+    padding: 15px 0 15px 0; /* T, R, B, L - Remove right padding */
     background-color: white;
 }
 
+/* Issue 2 Fix: Apply transform hack directly */
 .comparison-specs {
     flex: 0 0 auto;
     width: 200px;
@@ -211,18 +221,19 @@ main { padding: 20px 30px; }
     position: sticky;
     left: 0;
     background-color: var(--bg-color);
-    /* Issue 1: Increase z-index significantly */
-    z-index: 5;
+    z-index: 5; /* Spec names highest among scrolling content */
     border-right: 2px solid var(--border-color);
+    transform: translateZ(0); /* Force layer */
 }
 
 .comparison-specs .spec-sticky-header,
 .comparison-specs .spec-scrollable-header,
-.comparison-specs .spec-inquiry-header { }
+.comparison-specs .spec-inquiry-header {
+    background-color: var(--bg-color);
+}
 
-/* Issue 2: Add padding-left */
 .comparison-specs div > div {
-    padding: 6px 0 6px 10px; /* Added 10px left padding */
+    padding: 6px 0 6px 10px; /* Left padding added */
     font-weight: 600; color: var(--primary-color);
     font-size: 0.85em;
     word-break: break-word;
@@ -243,7 +254,7 @@ main { padding: 20px 30px; }
     width: 220px;
     border-left: 1px solid var(--border-color);
     padding-left: 20px;
-    padding-right: 15px;
+    padding-right: 15px; /* Keep right padding for spacing between products */
     position: relative;
     background-color: #fff;
 }
@@ -251,16 +262,15 @@ main { padding: 20px 30px; }
     border-left: none;
 }
 
+/* Issue 2 Fix: Apply transform hack directly */
 .comparison-product-sticky {
     position: sticky;
     top: var(--comparison-h2-height);
-    background-color: white;
-    /* Issue 1: Set z-index lower than specs */
-    z-index: 4;
+    background-color: white; /* Crucial: Must be solid */
+    z-index: 4; /* Below specs */
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
-    /* Issue 1: Add will-change */
-    will-change: transform;
+    transform: translateZ(0); /* Force layer */
 }
 
 .comparison-product-sticky div {
@@ -274,7 +284,7 @@ main { padding: 20px 30px; }
 
 .comparison-product-scrollable {
      position: relative;
-     z-index: 1; /* Keep below sticky header */
+     z-index: 1;
      background-color: white;
 }
 
