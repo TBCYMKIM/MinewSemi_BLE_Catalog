@@ -281,7 +281,7 @@ function renderDataTable(data) {
     data.forEach(item => {
         const r = tbody.insertRow();
         const cellDetails = r.insertCell();
-        const btn = document.createElement('button'); btn.className = 'details-button';
+        const btn = document.createElement('button');
 
         const modelNo = item['Model No.'];
         const socSet = item['SoCset'];
@@ -289,18 +289,18 @@ function renderDataTable(data) {
 
         if (modelNo && socSet) {
             btn.dataset.uniqueId = uniqueId;
-            btn.addEventListener('click', handleDetailsClick);
             if (viewedProductIds.has(uniqueId)) {
-                 btn.textContent = 'View';
-                 btn.disabled = true;
-                 btn.style.backgroundColor = '#ccc';
+                 btn.textContent = 'Remove';
+                 btn.className = 'remove-from-table-btn';
+                 btn.addEventListener('click', handleRemoveFromTableClick);
             } else {
                  btn.textContent = 'Add';
-                 btn.disabled = false;
-                 btn.style.backgroundColor = '';
+                 btn.className = 'details-button';
+                 btn.addEventListener('click', handleDetailsClick);
             }
         } else {
             btn.disabled = true; btn.title = "Unique ID unavailable";
+            btn.className = 'details-button';
         }
         cellDetails.appendChild(btn);
         csvHeaders.forEach(h => { r.insertCell().textContent = (item[h] ?? ''); });
@@ -315,10 +315,14 @@ function handleDetailsClick(event) {
     if (!viewedProductIds.has(uniqueId)) {
         viewedProductIds.add(uniqueId);
         renderComparisonView();
-        button.textContent = 'View';
-        button.disabled = true;
-        button.style.backgroundColor = '#ccc';
+        // Change button to Remove
+        button.textContent = 'Remove';
+        button.classList.remove('details-button');
+        button.classList.add('remove-from-table-btn');
+        button.removeEventListener('click', handleDetailsClick);
+        button.addEventListener('click', handleRemoveFromTableClick);
     } else {
+         // If already added, just scroll to it in comparison view
          const comparisonProductCol = document.querySelector(`.comparison-product[data-unique-id="${uniqueId}"]`);
          if (comparisonProductCol) {
              comparisonProductCol.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
@@ -328,6 +332,24 @@ function handleDetailsClick(event) {
          }
     }
 }
+
+function handleRemoveFromTableClick(event) {
+    const button = event.target;
+    const uniqueId = button.dataset.uniqueId;
+    if (!uniqueId) return;
+
+    if (viewedProductIds.has(uniqueId)) {
+        viewedProductIds.delete(uniqueId);
+        renderComparisonView();
+        // Change button back to Add
+        button.textContent = 'Add';
+        button.classList.remove('remove-from-table-btn');
+        button.classList.add('details-button');
+        button.removeEventListener('click', handleRemoveFromTableClick);
+        button.addEventListener('click', handleDetailsClick);
+    }
+}
+
 
 function getComparisonData() {
     const products = [];
@@ -386,7 +408,7 @@ function renderComparisonView() {
     stickySpecHeaderDiv.className = 'spec-sticky-header';
     stickySpecs.forEach(spec => {
         const specNameDiv = document.createElement('div');
-        specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':'; // Image 레이블 제거
+        specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':';
         stickySpecHeaderDiv.appendChild(specNameDiv);
     });
     specsDiv.appendChild(stickySpecHeaderDiv);
@@ -431,11 +453,15 @@ function renderComparisonView() {
                 removeBtn.onclick = () => {
                     viewedProductIds.delete(uniqueId);
                     renderComparisonView();
-                    const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"]`);
+                    const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"], .remove-from-table-btn[data-unique-id="${uniqueId}"]`);
                     if(tableButton) {
                         tableButton.textContent = 'Add';
+                        tableButton.className = 'details-button'; // Reset class
                         tableButton.disabled = false;
                         tableButton.style.backgroundColor = '';
+                        // Re-attach correct listener
+                        tableButton.removeEventListener('click', handleRemoveFromTableClick);
+                        tableButton.addEventListener('click', handleDetailsClick);
                     }
                 };
                 valueDiv.appendChild(removeBtn);
@@ -466,7 +492,7 @@ function renderComparisonView() {
              valueDiv.textContent = product[spec] ?? 'N/A';
              scrollableDiv.appendChild(valueDiv);
         });
-        // Inquiry button is part of the scrollable section now
+
         inquirySpec.forEach(spec => {
             const valueDiv = document.createElement('div');
             valueDiv.classList.add('value-inquiry');
@@ -481,7 +507,7 @@ function renderComparisonView() {
                 }
             };
             valueDiv.appendChild(inquiryBtn);
-            scrollableDiv.appendChild(valueDiv); // Append inquiry to scrollable
+            scrollableDiv.appendChild(valueDiv);
         });
         productDiv.appendChild(scrollableDiv);
 

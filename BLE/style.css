@@ -7,6 +7,8 @@
     --bg-color: #f8f9fa;
     --header-bg: #ffffff;
     --table-header-bg: #e9ecef;
+    --remove-color: #dc3545;
+    --remove-hover-color: #c82333;
 }
 
 body {
@@ -74,7 +76,7 @@ main { padding: 20px 30px; }
 .filter-list {
     display: none; position: absolute; top: 100%; left: 0; background-color: white;
     border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 5px 0; min-width: 180px; max-height: 240px; /* --- 필터 목록 높이 복원 --- */
+    padding: 5px 0; min-width: 180px; max-height: 240px; /* --- 필터 목록 높이 240px --- */
     overflow-y: auto; z-index: 100; border-radius: 4px; margin-top: 2px;
 }
 .filter-list ul { list-style: none; padding: 0; margin: 0; }
@@ -104,7 +106,7 @@ main { padding: 20px 30px; }
 #table-container {
     overflow-x: auto; background-color: #fff; padding: 0; border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
-    max-height: 40vh; overflow-y: auto; margin-bottom: 20px; position: relative;
+    max-height: 50vh; overflow-y: auto; margin-bottom: 20px; position: relative;
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
 #data-table { border-collapse: collapse; width: 100%; }
@@ -125,20 +127,28 @@ main { padding: 20px 30px; }
 #comparison-section {
     margin-top: 30px; background-color: #fff; border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
-    padding: 15px;
+    padding: 0; /* --- 내부 컨테이너에서 패딩 관리 --- */
     max-height: 80vh;
     overflow: auto;
     position: relative;
 }
 #comparison-section h2 {
-    margin-top: 0; margin-bottom: 15px; color: var(--primary-color);
-    border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 1.4em;
+    margin: 0; /* --- 기본 마진 제거 --- */
+    padding: 15px; /* --- 패딩으로 대체 --- */
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.4em;
+    position: sticky; /* --- 섹션 제목도 고정 --- */
+    top: 0;
+    background-color: white;
+    z-index: 4; /* --- 가장 높게 --- */
 }
 
 #comparison-container {
     display: flex;
     gap: 0;
     width: max-content;
+    padding: 15px; /* --- 컨테이너 내부에 패딩 추가 --- */
 }
 
 .comparison-specs {
@@ -146,9 +156,9 @@ main { padding: 20px 30px; }
     width: 200px;
     padding-right: 15px;
     position: sticky;
-    left: 0;
-    background-color: var(--bg-color); /* 배경색 지정 */
-    z-index: 3; /* 가장 높게 */
+    left: 15px; /* --- 컨테이너 패딩만큼 띄움 --- */
+    background-color: var(--bg-color);
+    z-index: 3;
     border-right: 2px solid var(--border-color);
 }
 
@@ -161,7 +171,7 @@ main { padding: 20px 30px; }
 .comparison-specs div > div {
     padding: 6px 0; font-weight: 600; color: var(--primary-color);
     font-size: 0.85em;
-    word-break: break-word; /* 스펙 이름 줄바꿈 허용 */
+    word-break: break-word;
     height: 40px;
     display: flex; align-items: center;
     border-bottom: 1px solid var(--secondary-color);
@@ -181,14 +191,14 @@ main { padding: 20px 30px; }
     padding-right: 15px;
     position: relative;
 }
-.comparison-product:first-of-type { border-left: none; }
+.comparison-product:first-of-type { border-left: none; margin-left: 15px; /* 스펙 열 너비 + 패딩 만큼 띄움 */}
 
 
 .comparison-product-sticky {
     position: sticky;
-    top: 0;
-    background-color: white; /* 배경색 확실히 지정 */
-    z-index: 2; /* 스펙 열보다는 낮게 */
+    top: 0; /* --- comparison-section 스크롤 기준 상단 고정 --- */
+    background-color: white;
+    z-index: 2;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -202,9 +212,9 @@ main { padding: 20px 30px; }
 .comparison-product-sticky div.value-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .comparison-product-scrollable {
-     background-color: white; /* 배경색 지정 */
+     background-color: white;
      position: relative;
-     z-index: 1; /* sticky 헤더보다 낮게 */
+     z-index: 1;
 }
 
 .comparison-product-scrollable div {
@@ -217,10 +227,10 @@ main { padding: 20px 30px; }
 
 
 .comparison-remove-btn {
-    padding: 3px 8px; font-size: 0.8em; cursor: pointer; background-color: #dc3545;
+    padding: 3px 8px; font-size: 0.8em; cursor: pointer; background-color: var(--remove-color);
     color: white; border: none; border-radius: 4px;
 }
-.comparison-remove-btn:hover { background-color: #c82333; }
+.comparison-remove-btn:hover { background-color: var(--remove-hover-color); }
 
 .comparison-inquiry-btn {
     padding: 5px 10px; font-size: 0.85em; cursor: pointer; background-color: var(--primary-color);
@@ -246,9 +256,14 @@ footer {
 }
 footer .copyright { font-size: 0.9em; color: #666; margin: 8px 0; line-height: 1.5; }
 
-.details-button {
-    padding: 5px 10px; font-size: 0.85em; cursor: pointer; background-color: var(--accent-color);
+.details-button, .remove-from-table-btn {
+    padding: 5px 10px; font-size: 0.85em; cursor: pointer;
     color: white; border: none; border-radius: 4px; transition: background-color 0.2s ease;
 }
+
+.details-button { background-color: var(--accent-color); }
 .details-button:hover { background-color: var(--primary-color); }
 .details-button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+.remove-from-table-btn { background-color: var(--remove-color); }
+.remove-from-table-btn:hover { background-color: var(--remove-hover-color); }
