@@ -76,7 +76,7 @@ main { padding: 20px 30px; }
 .filter-list {
     display: none; position: absolute; top: 100%; left: 0; background-color: white;
     border: 1px solid var(--border-color); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 5px 0; min-width: 180px; max-height: 240px; /* --- 필터 목록 높이 복원 --- */
+    padding: 5px 0; min-width: 180px; max-height: 150px;
     overflow-y: auto; z-index: 100; border-radius: 4px; margin-top: 2px;
 }
 .filter-list ul { list-style: none; padding: 0; margin: 0; }
@@ -106,7 +106,7 @@ main { padding: 20px 30px; }
 #table-container {
     overflow-x: auto; background-color: #fff; padding: 0; border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color);
-    max-height: 40vh; overflow-y: auto; margin-bottom: 20px; position: relative;
+    max-height: 50vh; overflow-y: auto; margin-bottom: 20px; position: relative;
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
 #data-table { border-collapse: collapse; width: 100%; }
@@ -115,13 +115,13 @@ main { padding: 20px 30px; }
     font-size: 0.9em; vertical-align: top; white-space: nowrap;
 }
 #data-table thead th {
-    background-color: var(--table-header-bg); /* 배경색 필수 */
+    background-color: var(--table-header-bg);
     color: var(--primary-color); font-weight: 600;
     position: sticky;
-    top: 0; /* 컨테이너 상단에 고정 */
-    z-index: 10; /* tbody 내용보다 위에 오도록 */
+    top: 0;
+    z-index: 10;
     border-bottom: 2px solid var(--border-color);
-    outline: 1px solid var(--table-header-bg); /* 경계선 겹침 방지 트릭 */
+    /* outline 제거 */
 }
 #data-table thead th:first-child { width: 70px; text-align: center; }
 #data-table tbody td:first-child { text-align: center; }
@@ -159,9 +159,9 @@ main { padding: 20px 30px; }
 .comparison-specs {
     flex: 0 0 auto;
     width: 200px;
-    padding-right: 15px;
+    padding-right: 15px; /* 오른쪽 여백 추가 */
     position: sticky;
-    left: 0; /* 컨테이너 패딩 고려 안 함 (컨테이너 기준 0) */
+    left: 0; /* 컨테이너 왼쪽에 붙임 */
     background-color: var(--bg-color);
     z-index: 3;
     border-right: 2px solid var(--border-color);
@@ -192,7 +192,7 @@ main { padding: 20px 30px; }
     flex: 0 0 auto;
     width: 220px;
     border-left: 1px solid var(--border-color);
-    padding-left: 15px;
+    padding-left: 15px; /* 내부 좌우 여백 */
     padding-right: 15px;
     position: relative;
 }
@@ -204,9 +204,9 @@ main { padding: 20px 30px; }
 
 .comparison-product-sticky {
     position: sticky;
-    top: 0; /* comparison-section 스크롤 기준 상단 고정 */
-    background-color: white; /* 배경색 확실히 지정 */
-    z-index: 2; /* 스크롤 영역보다는 높게, 스펙 열보다는 낮게 */
+    top: 0;
+    background-color: white;
+    z-index: 2;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -220,9 +220,9 @@ main { padding: 20px 30px; }
 .comparison-product-sticky div.value-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .comparison-product-scrollable {
-     background-color: white; /* 배경색 지정 */
+     background-color: white;
      position: relative;
-     z-index: 1; /* sticky 헤더보다 낮게 */
+     z-index: 1;
 }
 
 .comparison-product-scrollable div {
