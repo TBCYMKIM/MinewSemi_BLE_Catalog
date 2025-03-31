@@ -1,10 +1,7 @@
 const GOOGLE_FORM_LINK = 'YOUR_GOOGLE_FORM_LINK_HERE';
 
-let isSyncingScroll = false;
-let topScrollContainer = null;
-let topScrollMeasure = null;
-let bottomScrollContainer = null; // Refers to comparison-section now
-let comparisonContainer = null; // Refers to the inner container
+// --- ResizeObserver 변수 ---
+let tableResizeObserver = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('data.csv')
@@ -27,14 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ];
                 textColumns = headers.filter(h => !numericColumns.includes(h));
                 renderFilterTabs(headers);
-                applyFiltersAndRender(); // Initial render
+                applyFiltersAndRender(); // Initial render calls everything
 
-                // Initialize comparison scroll elements
-                topScrollContainer = document.getElementById('comparison-top-scrollbar-container');
-                topScrollMeasure = document.getElementById('comparison-top-scrollbar-measure');
-                bottomScrollContainer = document.getElementById('comparison-section'); // This element scrolls horizontally
-                comparisonContainer = document.getElementById('comparison-container'); // This element scrolls vertically
-                setupScrollSync();
+                // --- 테이블 너비 동기화를 위한 ResizeObserver 설정 ---
+                setupTableResizeObserver();
 
             } else {
                 console.error("CSV parsing resulted in no headers or no data.");
@@ -48,72 +41,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('click', (event) => {
         const target = event.target;
+        // Close filter lists on outside click
         if (!target.closest('.tab') && !target.closest('.filter-list')) {
             const wasListOpen = document.querySelector('.filter-list[style*="display: block"]');
             if (wasListOpen) {
-                applyFiltersAndRender();
+                // Re-apply filters only if a list was open and is now closing
+                // applyFiltersAndRender(); // This might be too aggressive, consider if needed
             }
             closeAllFilterLists();
         }
     });
 
-    // --- Comparison Scroll Sync Logic ---
-    function setupScrollSync() {
-        if (!topScrollContainer || !bottomScrollContainer) return;
+    // --- 테이블 컨테이너 ResizeObserver 설정 ---
+    function setupTableResizeObserver() {
+        const tableContainer = document.getElementById('table-container');
+        if (!tableContainer) return;
 
-        topScrollContainer.addEventListener('scroll', () => {
-            if (isSyncingScroll) return;
-            isSyncingScroll = true;
-            bottomScrollContainer.scrollLeft = topScrollContainer.scrollLeft;
-            isSyncingScroll = false;
-        }, { passive: true }); // Use passive listener for better performance
-
-        bottomScrollContainer.addEventListener('scroll', () => {
-            if (isSyncingScroll) return;
-            isSyncingScroll = true;
-            topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
-            isSyncingScroll = false;
-        }, { passive: true });
-    }
-
-    function updateTopScrollbarWidth() {
-        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) return;
-
-        // Use scrollWidth of the element that determines the actual content width
-        const contentWidth = comparisonContainer.scrollWidth;
-        const containerWidth = bottomScrollContainer.clientWidth; // Width of the viewport
-
-        if (contentWidth > containerWidth) {
-            topScrollMeasure.style.width = `${contentWidth}px`;
-            topScrollContainer.style.display = 'block';
-        } else {
-            topScrollMeasure.style.width = '100%';
-            topScrollContainer.style.display = 'none';
+        // Disconnect previous observer if exists
+        if (tableResizeObserver) {
+            tableResizeObserver.disconnect();
         }
 
-        // Ensure initial sync after DOM updates
-        requestAnimationFrame(() => {
-            topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
+        tableResizeObserver = new ResizeObserver(entries => {
+            // Re-sync widths when container size changes (e.g., window resize)
+            for (let entry of entries) {
+                // Check if scrollable area is visible before syncing
+                 const scrollableArea = document.getElementById('scrollable-data-area');
+                 if (scrollableArea && scrollableArea.style.display !== 'none') {
+                     syncHeaderWidths();
+                 }
+            }
         });
+
+        tableResizeObserver.observe(tableContainer);
     }
 
 
-    // --- Make render/apply functions globally accessible or manage scope ---
+    // --- Make render/apply functions globally accessible ---
     window.renderComparisonView = function() {
         const comparisonSection = document.getElementById('comparison-section');
-        const container = document.getElementById('comparison-container'); // Target for inner content
+        const container = document.getElementById('comparison-container');
         if (!container || !comparisonSection) return;
 
-        container.innerHTML = ''; // Clear previous comparison items
+        container.innerHTML = '';
         const productsToCompare = getComparisonData();
 
         if (productsToCompare.length === 0) {
             comparisonSection.style.display = 'none';
-            if (topScrollContainer) topScrollContainer.style.display = 'none';
             return;
         }
 
-        comparisonSection.style.display = 'block'; // Show the section
+        comparisonSection.style.display = 'block';
 
         const stickySpecs = ['Action', 'Image'];
         const scrollableSpecs = [...csvHeaders];
@@ -149,7 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         specsDiv.appendChild(inquirySpecHeaderDiv);
 
-        container.appendChild(specsDiv); // Add spec names column to container
+        container.appendChild(specsDiv);
+
 
         productsToCompare.forEach(product => {
             const productDiv = document.createElement('div');
@@ -226,18 +205,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             productDiv.appendChild(scrollableDiv);
 
-            container.appendChild(productDiv); // Add product column to container
+            container.appendChild(productDiv);
         });
-
-        // Update top scrollbar after rendering content
-        requestAnimationFrame(updateTopScrollbarWidth);
     }
 
     window.applyFiltersAndRender = function() {
         const currentFilteredData = filterData();
         renderFilters();
-        renderDataTable(currentFilteredData);
-        renderComparisonView();
+        renderDataTable(currentFilteredData); // Renders table, then syncs widths
+        renderComparisonView(); // Renders comparison view
     }
 
 }); // End of DOMContentLoaded
@@ -317,7 +293,8 @@ function renderFilterTabs(headers) {
             const isOpen = listDiv.style.display === 'block';
             if (isOpen) {
                 listDiv.style.display = 'none'; tab.classList.remove('active');
-                applyFiltersAndRender();
+                // Re-apply filters when closing the list to reflect potential changes
+                // applyFiltersAndRender(); // Decide if needed based on UX
             } else {
                 closeAllFilterLists(listDiv);
                 populateFilterList(header, listUl);
@@ -399,6 +376,8 @@ function populateFilterList(header, listElement) {
             } else {
                 tabButton.classList.remove('has-filter');
             }
+            // Apply filters immediately after selection change
+            applyFiltersAndRender();
         });
         listElement.appendChild(li);
     });
@@ -444,7 +423,6 @@ function filterData() {
     return filteredData;
 }
 
-// --- MODIFIED renderDataTable function ---
 function renderDataTable(data) {
     const tableContainer = document.getElementById('table-container');
     const stickyHeaderRow = document.getElementById('sticky-header-row');
@@ -485,10 +463,9 @@ function renderDataTable(data) {
 
     stickyHeaderRow.style.display = 'flex';
     scrollableDataArea.style.display = 'block';
-    table.style.display = 'table'; // Use 'table' for display
+    table.style.display = 'table';
     noDataMsg.style.display = 'none';
 
-    // Create header cells
     const headerCellCompare = document.createElement('div');
     headerCellCompare.className = 'header-cell compare-column';
     headerCellCompare.textContent = 'Compare';
@@ -498,12 +475,11 @@ function renderDataTable(data) {
         const headerCell = document.createElement('div');
         headerCell.className = 'header-cell';
         headerCell.textContent = headerText;
-        const className = headerText.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-'); // Generate class name
+        const className = headerText.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-');
         headerCell.classList.add(`col-${className}`);
         stickyHeaderRow.appendChild(headerCell);
     });
 
-    // Create data rows
     data.forEach(item => {
         const r = tbody.insertRow();
 
@@ -534,12 +510,11 @@ function renderDataTable(data) {
         csvHeaders.forEach(headerKey => {
             const cell = r.insertCell();
             cell.textContent = (item[headerKey] ?? '');
-            const className = headerKey.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-'); // Generate same class name
+            const className = headerKey.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-');
             cell.classList.add(`col-${className}`);
         });
     });
 
-    // Sync widths after rendering
     requestAnimationFrame(() => {
         syncHeaderWidths();
     });
@@ -548,65 +523,81 @@ function renderDataTable(data) {
 function syncHeaderWidths() {
     const headerCells = document.querySelectorAll('#sticky-header-row .header-cell');
     const firstDataRow = document.querySelector('#data-table tbody tr:first-child');
+    const scrollableDataArea = document.getElementById('scrollable-data-area');
+    const stickyHeaderRow = document.getElementById('sticky-header-row');
+    const dataTable = document.getElementById('data-table');
 
-    if (!firstDataRow || headerCells.length === 0) {
-        // No data rows or header cells to sync with
-        return;
+    if (!firstDataRow || headerCells.length === 0 || !scrollableDataArea || !stickyHeaderRow || !dataTable) {
+        return; // Exit if elements aren't ready
     }
     const firstDataRowCells = firstDataRow.querySelectorAll('td');
 
     if (firstDataRowCells.length === 0 || headerCells.length !== firstDataRowCells.length) {
-        console.warn("Cannot sync widths: Header and data cells mismatch or not found in first row.");
+        console.warn("Cannot sync widths: Header and data cells mismatch.");
         return;
     }
 
-    // Reset header widths first to measure natural width needed
+    // 1. Reset widths to calculate natural header width needed
     headerCells.forEach(cell => {
         cell.style.width = 'auto';
         cell.style.minWidth = 'auto';
-        cell.style.flexBasis = 'auto'; // Reset flex basis too
+        cell.style.flexBasis = 'auto'; // Also reset flex-basis
     });
+    // Reset data cell widths as well to avoid interference during measurement
+    firstDataRowCells.forEach(cell => {
+        cell.style.width = 'auto';
+        cell.style.minWidth = 'auto';
+    });
+     // Reset table width
+    dataTable.style.width = 'auto';
+    dataTable.style.minWidth = 'auto';
+    stickyHeaderRow.style.width = 'auto';
+    stickyHeaderRow.style.minWidth = 'auto';
 
+
+    // 2. Calculate required width for each header cell
     let totalHeaderWidth = 0;
     const columnWidths = [];
 
-    // Calculate required width for each header cell based on its content
     headerCells.forEach((headerCell, i) => {
-        // Ensure nowrap is temporarily set for measurement if needed (CSS should handle this)
-        // headerCell.style.whiteSpace = 'nowrap';
-        const headerScrollWidth = headerCell.scrollWidth; // Includes padding
-        const headerPadding = parseFloat(getComputedStyle(headerCell).paddingLeft) + parseFloat(getComputedStyle(headerCell).paddingRight);
-        const headerBorder = parseFloat(getComputedStyle(headerCell).borderRightWidth); // Assuming only right border matters for width calc
-        const requiredWidth = headerScrollWidth + headerBorder + 2; // Add a small buffer
-
+        // Add 1px buffer for potential rounding issues + border
+        const requiredWidth = Math.max(headerCell.scrollWidth, firstDataRowCells[i].scrollWidth) + 2;
         columnWidths[i] = requiredWidth;
         totalHeaderWidth += requiredWidth;
-        // headerCell.style.whiteSpace = ''; // Reset white-space if changed
     });
 
-    // Apply calculated widths
+    // 3. Apply calculated widths to header and all data cells
     headerCells.forEach((headerCell, i) => {
-        headerCell.style.minWidth = `${columnWidths[i]}px`;
-        headerCell.style.width = `${columnWidths[i]}px`;
-        // Also apply to data cells
-        const dataCell = firstDataRowCells[i];
-        if (dataCell) {
-             dataCell.style.width = `${columnWidths[i]}px`;
-             dataCell.style.minWidth = `${columnWidths[i]}px`; // Ensure minWidth too
-        }
+        const widthPx = `${columnWidths[i]}px`;
+        headerCell.style.minWidth = widthPx;
+        headerCell.style.width = widthPx;
+        headerCell.style.flexBasis = widthPx; // Set flex-basis too
+
+        // Apply to all cells in this column, not just the first row
+        const dataCellsInColumn = document.querySelectorAll(`#data-table td:nth-child(${i + 1})`);
+        dataCellsInColumn.forEach(cell => {
+            cell.style.minWidth = widthPx;
+            cell.style.width = widthPx;
+        });
     });
 
-    // Set table min-width to ensure horizontal scroll works correctly
-    const dataTable = document.getElementById('data-table');
-    if (dataTable) {
-        dataTable.style.minWidth = `${totalHeaderWidth}px`;
-        dataTable.style.width = `${totalHeaderWidth}px`; // Set explicit width too
+    // 4. Set container widths
+    const finalWidthPx = `${totalHeaderWidth}px`;
+    stickyHeaderRow.style.width = finalWidthPx;
+    stickyHeaderRow.style.minWidth = finalWidthPx; // Ensure it doesn't shrink
+    dataTable.style.width = finalWidthPx;
+    dataTable.style.minWidth = finalWidthPx; // Ensure it doesn't shrink
+
+
+    // 5. Compensate for vertical scrollbar in data area
+    const scrollbarWidth = scrollableDataArea.offsetWidth - scrollableDataArea.clientWidth;
+    if (scrollbarWidth > 0) {
+        stickyHeaderRow.style.paddingRight = `${scrollbarWidth}px`;
+        // Adjust total width calculation to potentially include scrollbar width?
+        // Or ensure the container #table-container accounts for it.
+    } else {
+        stickyHeaderRow.style.paddingRight = '0px';
     }
-    const headerRow = document.getElementById('sticky-header-row');
-     if (headerRow) {
-        headerRow.style.minWidth = `${totalHeaderWidth}px`;
-        headerRow.style.width = `${totalHeaderWidth}px`;
-     }
 }
 
 
