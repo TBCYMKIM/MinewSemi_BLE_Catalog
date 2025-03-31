@@ -1,5 +1,11 @@
 const GOOGLE_FORM_LINK = 'YOUR_GOOGLE_FORM_LINK_HERE';
 
+let isSyncingScroll = false;
+let topScrollContainer = null;
+let topScrollMeasure = null;
+let bottomScrollContainer = null;
+let comparisonContainer = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     fetch('data.csv')
         .then(response => {
@@ -22,6 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 textColumns = headers.filter(h => !numericColumns.includes(h));
                 renderFilterTabs(headers);
                 applyFiltersAndRender();
+
+                topScrollContainer = document.getElementById('comparison-top-scrollbar-container');
+                topScrollMeasure = document.getElementById('comparison-top-scrollbar-measure');
+                bottomScrollContainer = document.getElementById('comparison-section');
+                comparisonContainer = document.getElementById('comparison-container');
+                setupScrollSync();
+
             } else {
                 console.error("CSV parsing resulted in no headers or no data.");
                 document.getElementById('table-container').innerHTML = '<p>Error: Failed to parse data from data.csv.</p>';
@@ -42,7 +55,196 @@ document.addEventListener('DOMContentLoaded', () => {
             closeAllFilterLists();
         }
     });
-});
+
+    // --- 스크롤 동기화 설정 함수 ---
+    function setupScrollSync() {
+        if (!topScrollContainer || !bottomScrollContainer) return;
+
+        topScrollContainer.addEventListener('scroll', () => {
+            if (isSyncingScroll) return;
+            isSyncingScroll = true;
+            bottomScrollContainer.scrollLeft = topScrollContainer.scrollLeft;
+            isSyncingScroll = false;
+        });
+
+        bottomScrollContainer.addEventListener('scroll', () => {
+            if (isSyncingScroll) return;
+            isSyncingScroll = true;
+            topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
+            isSyncingScroll = false;
+        });
+    }
+
+    // --- 상단 스크롤바 너비 설정 함수 ---
+    function updateTopScrollbarWidth() {
+        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) return;
+
+        const scrollWidth = comparisonContainer.scrollWidth;
+        const clientWidth = bottomScrollContainer.clientWidth; // Use bottom container's client width
+
+        if (scrollWidth > clientWidth) {
+            topScrollMeasure.style.width = `${scrollWidth}px`;
+            topScrollContainer.style.display = 'block'; // Show top scrollbar if needed
+        } else {
+            topScrollMeasure.style.width = '100%'; // Reset width
+            topScrollContainer.style.display = 'none'; // Hide if not needed
+        }
+        // Ensure initial sync
+         requestAnimationFrame(() => { // Wait for potential rendering updates
+            topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
+         });
+    }
+
+    // --- 비교 보기 렌더링 함수 수정 ---
+    window.renderComparisonView = function() { // Make it global or pass elements if needed
+        const comparisonSection = document.getElementById('comparison-section');
+        const container = document.getElementById('comparison-container');
+        if (!container || !comparisonSection) return;
+
+        container.innerHTML = '';
+        const productsToCompare = getComparisonData();
+
+        if (productsToCompare.length === 0) {
+            comparisonSection.style.display = 'none';
+            if(topScrollContainer) topScrollContainer.style.display = 'none'; // Hide top scrollbar too
+            return;
+        }
+
+        comparisonSection.style.display = 'block';
+        // Top scrollbar might need to be displayed even if comparison view was hidden
+        // updateTopScrollbarWidth() will handle this later
+
+        const stickySpecs = ['Action', 'Image'];
+        const scrollableSpecs = [...csvHeaders];
+        const inquirySpec = ['Inquiry'];
+
+        const specsDiv = document.createElement('div');
+        specsDiv.className = 'comparison-specs';
+
+        const stickySpecHeaderDiv = document.createElement('div');
+        stickySpecHeaderDiv.className = 'spec-sticky-header';
+        stickySpecs.forEach(spec => {
+            const specNameDiv = document.createElement('div');
+            specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':';
+            stickySpecHeaderDiv.appendChild(specNameDiv);
+        });
+        specsDiv.appendChild(stickySpecHeaderDiv);
+
+        const scrollableSpecHeaderDiv = document.createElement('div');
+        scrollableSpecHeaderDiv.className = 'spec-scrollable-header';
+        scrollableSpecs.forEach(spec => {
+            const specNameDiv = document.createElement('div');
+            specNameDiv.textContent = spec + ':';
+            scrollableSpecHeaderDiv.appendChild(specNameDiv);
+        });
+        specsDiv.appendChild(scrollableSpecHeaderDiv);
+
+        const inquirySpecHeaderDiv = document.createElement('div');
+        inquirySpecHeaderDiv.className = 'spec-inquiry-header';
+        inquirySpec.forEach(spec => {
+            const specNameDiv = document.createElement('div');
+            specNameDiv.textContent = '';
+            inquirySpecHeaderDiv.appendChild(specNameDiv);
+        });
+        specsDiv.appendChild(inquirySpecHeaderDiv);
+
+        container.appendChild(specsDiv);
+
+
+        productsToCompare.forEach(product => {
+            const productDiv = document.createElement('div');
+            productDiv.className = 'comparison-product';
+            const uniqueId = `${product['Model No.']}__${product['SoCset']}`;
+            productDiv.dataset.uniqueId = uniqueId;
+
+            const stickyDiv = document.createElement('div');
+            stickyDiv.className = 'comparison-product-sticky';
+
+            stickySpecs.forEach(spec => {
+                const valueDiv = document.createElement('div');
+                if (spec === 'Action') {
+                    valueDiv.classList.add('value-action');
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.className = 'comparison-remove-btn';
+                    removeBtn.onclick = () => {
+                        viewedProductIds.delete(uniqueId);
+                        renderComparisonView(); // Re-render after delete
+                        const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"], .remove-from-table-btn[data-unique-id="${uniqueId}"]`);
+                        if(tableButton) {
+                            tableButton.textContent = 'Add';
+                            tableButton.className = 'details-button';
+                            tableButton.disabled = false;
+                            tableButton.removeEventListener('click', handleRemoveFromTableClick);
+                            tableButton.addEventListener('click', handleDetailsClick);
+                        }
+                    };
+                    valueDiv.appendChild(removeBtn);
+                } else if (spec === 'Image') {
+                    valueDiv.classList.add('value-image');
+                    const img = document.createElement('img');
+                    const modelNo = product['Model No.'];
+                    const baseModelNo = modelNo.replace(/\s*\([ABab]\)\s*$/, '').trim();
+                    const imageName = baseModelNo.replace(/[\s()/]/g, '_');
+                    const imagePathPng = `images/${imageName}.png`;
+                    const imagePathJpg = `images/${imageName}.jpg`;
+                    img.alt = `Image of ${modelNo}`;
+                    img.style.opacity = '0';
+                    img.onerror = () => { img.onerror = () => { img.alt = 'Image N/A'; img.style.opacity = '1';}; img.src = imagePathJpg; };
+                    img.onload = () => { img.style.opacity = '1'; };
+                    img.src = imagePathPng;
+                    valueDiv.appendChild(img);
+                }
+                stickyDiv.appendChild(valueDiv);
+            });
+            productDiv.appendChild(stickyDiv);
+
+
+            const scrollableDiv = document.createElement('div');
+            scrollableDiv.className = 'comparison-product-scrollable';
+            scrollableSpecs.forEach(spec => {
+                 const valueDiv = document.createElement('div');
+                 valueDiv.textContent = product[spec] ?? 'N/A';
+                 scrollableDiv.appendChild(valueDiv);
+            });
+
+            inquirySpec.forEach(spec => {
+                const valueDiv = document.createElement('div');
+                valueDiv.classList.add('value-inquiry');
+                const inquiryBtn = document.createElement('button');
+                inquiryBtn.textContent = '제품 문의하기';
+                inquiryBtn.className = 'comparison-inquiry-btn';
+                inquiryBtn.onclick = () => {
+                    if (GOOGLE_FORM_LINK && GOOGLE_FORM_LINK !== 'YOUR_GOOGLE_FORM_LINK_HERE') {
+                        window.open(GOOGLE_FORM_LINK, '_blank');
+                    } else {
+                        alert('문의 링크가 설정되지 않았습니다.');
+                    }
+                };
+                valueDiv.appendChild(inquiryBtn);
+                scrollableDiv.appendChild(valueDiv);
+            });
+            productDiv.appendChild(scrollableDiv);
+
+
+            container.appendChild(productDiv);
+        });
+
+        // --- 비교 보기 렌더링 후 상단 스크롤바 너비 업데이트 ---
+        requestAnimationFrame(updateTopScrollbarWidth); // Ensure DOM updates before calculating width
+    }
+
+    // --- 필터 적용 및 렌더링 함수 수정 ---
+    window.applyFiltersAndRender = function() { // Make global or pass elements
+        const currentFilteredData = filterData();
+        renderFilters();
+        renderDataTable(currentFilteredData);
+        renderComparisonView(); // This will now update the top scrollbar as well
+    }
+
+}); // End of DOMContentLoaded
+
+// --- 나머지 JS 함수 (수정 없음) ---
 
 let originalData = [];
 let csvHeaders = [];
@@ -245,7 +447,6 @@ function filterData() {
     return filteredData;
 }
 
-// --- MODIFIED renderDataTable function ---
 function renderDataTable(data) {
     const tableContainer = document.getElementById('table-container');
     const stickyHeaderRow = document.getElementById('sticky-header-row');
@@ -270,7 +471,6 @@ function renderDataTable(data) {
         stickyHeaderRow.style.display = 'none';
         scrollableDataArea.style.display = 'none';
         noDataMsg.style.display = 'none';
-        // Hide the underlying table structure as well if using table-layout: fixed later
         table.style.display = 'none';
         return;
     }
@@ -287,7 +487,7 @@ function renderDataTable(data) {
 
     stickyHeaderRow.style.display = 'flex';
     scrollableDataArea.style.display = 'block';
-    table.style.display = ''; // Make sure table is visible
+    table.style.display = '';
     noDataMsg.style.display = 'none';
 
     const headerCellCompare = document.createElement('div');
@@ -339,7 +539,7 @@ function renderDataTable(data) {
         });
     });
 }
-// --- END OF MODIFIED renderDataTable ---
+
 
 function handleDetailsClick(event) {
     const button = event.target;
@@ -348,7 +548,7 @@ function handleDetailsClick(event) {
 
     if (!viewedProductIds.has(uniqueId)) {
         viewedProductIds.add(uniqueId);
-        renderComparisonView();
+        renderComparisonView(); // Call the global render function
         button.textContent = 'Remove';
         button.className = 'remove-from-table-btn';
         button.removeEventListener('click', handleDetailsClick);
@@ -371,7 +571,7 @@ function handleRemoveFromTableClick(event) {
 
     if (viewedProductIds.has(uniqueId)) {
         viewedProductIds.delete(uniqueId);
-        renderComparisonView();
+        renderComparisonView(); // Call the global render function
         button.textContent = 'Add';
         button.className = 'details-button';
         button.removeEventListener('click', handleRemoveFromTableClick);
@@ -411,142 +611,6 @@ function getComparisonData() {
     return products;
 }
 
-function renderComparisonView() {
-    const comparisonSection = document.getElementById('comparison-section');
-    const container = document.getElementById('comparison-container');
-    if (!container || !comparisonSection) return;
+// renderComparisonView is now defined inside DOMContentLoaded and accessed via window
 
-    container.innerHTML = '';
-    const productsToCompare = getComparisonData();
-
-    if (productsToCompare.length === 0) {
-        comparisonSection.style.display = 'none';
-        return;
-    }
-
-    comparisonSection.style.display = 'block';
-
-    const stickySpecs = ['Action', 'Image'];
-    const scrollableSpecs = [...csvHeaders];
-    const inquirySpec = ['Inquiry'];
-
-    const specsDiv = document.createElement('div');
-    specsDiv.className = 'comparison-specs';
-
-    const stickySpecHeaderDiv = document.createElement('div');
-    stickySpecHeaderDiv.className = 'spec-sticky-header';
-    stickySpecs.forEach(spec => {
-        const specNameDiv = document.createElement('div');
-        specNameDiv.textContent = (spec === 'Action' || spec === 'Image') ? '' : spec + ':';
-        stickySpecHeaderDiv.appendChild(specNameDiv);
-    });
-    specsDiv.appendChild(stickySpecHeaderDiv);
-
-    const scrollableSpecHeaderDiv = document.createElement('div');
-    scrollableSpecHeaderDiv.className = 'spec-scrollable-header';
-    scrollableSpecs.forEach(spec => {
-        const specNameDiv = document.createElement('div');
-        specNameDiv.textContent = spec + ':';
-        scrollableSpecHeaderDiv.appendChild(specNameDiv);
-    });
-    specsDiv.appendChild(scrollableSpecHeaderDiv);
-
-    const inquirySpecHeaderDiv = document.createElement('div');
-    inquirySpecHeaderDiv.className = 'spec-inquiry-header';
-    inquirySpec.forEach(spec => {
-        const specNameDiv = document.createElement('div');
-        specNameDiv.textContent = '';
-        inquirySpecHeaderDiv.appendChild(specNameDiv);
-    });
-    specsDiv.appendChild(inquirySpecHeaderDiv);
-
-    container.appendChild(specsDiv);
-
-
-    productsToCompare.forEach(product => {
-        const productDiv = document.createElement('div');
-        productDiv.className = 'comparison-product';
-        const uniqueId = `${product['Model No.']}__${product['SoCset']}`;
-        productDiv.dataset.uniqueId = uniqueId;
-
-        const stickyDiv = document.createElement('div');
-        stickyDiv.className = 'comparison-product-sticky';
-
-        stickySpecs.forEach(spec => {
-            const valueDiv = document.createElement('div');
-            if (spec === 'Action') {
-                valueDiv.classList.add('value-action');
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'Remove';
-                removeBtn.className = 'comparison-remove-btn';
-                removeBtn.onclick = () => {
-                    viewedProductIds.delete(uniqueId);
-                    renderComparisonView();
-                    const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"], .remove-from-table-btn[data-unique-id="${uniqueId}"]`);
-                    if(tableButton) {
-                        tableButton.textContent = 'Add';
-                        tableButton.className = 'details-button';
-                        tableButton.disabled = false;
-                        tableButton.removeEventListener('click', handleRemoveFromTableClick);
-                        tableButton.addEventListener('click', handleDetailsClick);
-                    }
-                };
-                valueDiv.appendChild(removeBtn);
-            } else if (spec === 'Image') {
-                valueDiv.classList.add('value-image');
-                const img = document.createElement('img');
-                const modelNo = product['Model No.'];
-                const baseModelNo = modelNo.replace(/\s*\([ABab]\)\s*$/, '').trim();
-                const imageName = baseModelNo.replace(/[\s()/]/g, '_');
-                const imagePathPng = `images/${imageName}.png`;
-                const imagePathJpg = `images/${imageName}.jpg`;
-                img.alt = `Image of ${modelNo}`;
-                img.style.opacity = '0';
-                img.onerror = () => { img.onerror = () => { img.alt = 'Image N/A'; img.style.opacity = '1';}; img.src = imagePathJpg; };
-                img.onload = () => { img.style.opacity = '1'; };
-                img.src = imagePathPng;
-                valueDiv.appendChild(img);
-            }
-            stickyDiv.appendChild(valueDiv);
-        });
-        productDiv.appendChild(stickyDiv);
-
-
-        const scrollableDiv = document.createElement('div');
-        scrollableDiv.className = 'comparison-product-scrollable';
-        scrollableSpecs.forEach(spec => {
-             const valueDiv = document.createElement('div');
-             valueDiv.textContent = product[spec] ?? 'N/A';
-             scrollableDiv.appendChild(valueDiv);
-        });
-
-        inquirySpec.forEach(spec => {
-            const valueDiv = document.createElement('div');
-            valueDiv.classList.add('value-inquiry');
-            const inquiryBtn = document.createElement('button');
-            inquiryBtn.textContent = '제품 문의하기';
-            inquiryBtn.className = 'comparison-inquiry-btn';
-            inquiryBtn.onclick = () => {
-                if (GOOGLE_FORM_LINK && GOOGLE_FORM_LINK !== 'YOUR_GOOGLE_FORM_LINK_HERE') {
-                    window.open(GOOGLE_FORM_LINK, '_blank');
-                } else {
-                    alert('문의 링크가 설정되지 않았습니다.');
-                }
-            };
-            valueDiv.appendChild(inquiryBtn);
-            scrollableDiv.appendChild(valueDiv);
-        });
-        productDiv.appendChild(scrollableDiv);
-
-
-        container.appendChild(productDiv);
-    });
-}
-
-
-function applyFiltersAndRender() {
-    const currentFilteredData = filterData();
-    renderFilters();
-    renderDataTable(currentFilteredData);
-    renderComparisonView();
-}
+// applyFiltersAndRender is now defined inside DOMContentLoaded and accessed via window
