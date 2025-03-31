@@ -10,8 +10,27 @@
     --remove-color: #dc3545;
     --remove-hover-color: #c82333;
     --comparison-h2-height: 58px;
-    --compare-col-width: 85px;
     --scrollbar-height: 15px;
+
+    --col-width-compare: 85px;
+    --col-width-chipset-vendor: 130px;
+    --col-width-model-series: 140px;
+    --col-width-model-no: 150px;
+    --col-width-antenna: 110px;
+    --col-width-socset: 110px;
+    --col-width-max-range-m: 100px;
+    --col-width-max-length-mm: 110px;
+    --col-width-mid-length-mm: 110px;
+    --col-width-min-length-mm: 110px;
+    --col-width-flash-kb: 90px;
+    --col-width-ram-kb: 90px;
+    --col-width-reception-sensitivity-dbm: 130px;
+    --col-width-transmission-power-min-dbm: 140px;
+    --col-width-transmission-power-max-dbm: 140px;
+    --col-width-current-tx-ma: 100px;
+    --col-width-current-rx-ma: 100px;
+    --col-width-gpio: 80px;
+    --col-width-certification: 300px;
 }
 
 body {
@@ -115,8 +134,8 @@ main { padding: 20px 30px; }
     border: 1px solid var(--border-color);
     margin-bottom: 20px;
     position: relative;
-    overflow-x: auto; /* Container handles horizontal scroll */
-    overflow-y: hidden; /* Hide container vertical scroll */
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 #initial-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #555; background-color: var(--secondary-color); }
 #no-data-message { padding: 40px 20px; text-align: center; font-size: 1.1em; color: #777; font-style: italic; background-color: var(--secondary-color); }
@@ -130,8 +149,8 @@ main { padding: 20px 30px; }
     border-bottom: 2px solid var(--border-color);
     padding: 0;
     margin: 0;
-    min-width: 100%; /* Ensure header takes at least container width */
-    width: max-content; /* Allow header to grow with content */
+    min-width: 100%;
+    width: max-content;
     box-sizing: border-box;
 }
 
@@ -153,35 +172,32 @@ main { padding: 20px 30px; }
 .header-cell:last-child {
     border-right: none;
 }
-.header-cell.compare-column {
-    flex-basis: var(--compare-col-width);
-    text-align: center;
-    min-width: var(--compare-col-width);
-    justify-content: center;
-}
-.header-cell.col-chipset-vendor { flex-basis: 130px; min-width: 100px; }
-.header-cell.col-model-series { flex-basis: 130px; min-width: 100px; }
-.header-cell.col-model-no { flex-basis: 130px; min-width: 100px; }
-.header-cell.col-antenna { flex-basis: 130px; min-width: 100px; }
-.header-cell.col-socset { flex-basis: 130px; min-width: 100px; }
-.header-cell.col-max-range-m { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-max-length-mm { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-mid-length-mm { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-min-length-mm { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-flash-kb { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-ram-kb { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-reception-sensitivity-dbm { flex-basis: 120px; min-width: 100px; text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-min-dbm { flex-basis: 130px; min-width: 110px; text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-max-dbm { flex-basis: 130px; min-width: 110px; text-align: right; justify-content: flex-end;}
-.header-cell.col-current-tx-ma { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-current-rx-ma { flex-basis: 100px; min-width: 80px; text-align: right; justify-content: flex-end;}
-.header-cell.col-gpio { flex-basis: 80px; min-width: 60px; text-align: right; justify-content: flex-end;}
-.header-cell.col-certification { flex-basis: 250px; min-width: 200px; white-space: normal; flex-grow: 1; }
+
+.header-cell.compare-column { flex-basis: var(--col-width-compare); text-align: center; justify-content: center; }
+.header-cell.col-chipset-vendor { flex-basis: var(--col-width-chipset-vendor); }
+.header-cell.col-model-series { flex-basis: var(--col-width-model-series); }
+.header-cell.col-model-no { flex-basis: var(--col-width-model-no); }
+.header-cell.col-antenna { flex-basis: var(--col-width-antenna); }
+.header-cell.col-socset { flex-basis: var(--col-width-socset); }
+.header-cell.col-max-range-m { flex-basis: var(--col-width-max-range-m); text-align: right; justify-content: flex-end;}
+.header-cell.col-max-length-mm { flex-basis: var(--col-width-max-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-mid-length-mm { flex-basis: var(--col-width-mid-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-min-length-mm { flex-basis: var(--col-width-min-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-flash-kb { flex-basis: var(--col-width-flash-kb); text-align: right; justify-content: flex-end;}
+.header-cell.col-ram-kb { flex-basis: var(--col-width-ram-kb); text-align: right; justify-content: flex-end;}
+.header-cell.col-reception-sensitivity-dbm { flex-basis: var(--col-width-reception-sensitivity-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-transmission-power-min-dbm { flex-basis: var(--col-width-transmission-power-min-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-transmission-power-max-dbm { flex-basis: var(--col-width-transmission-power-max-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-current-tx-ma { flex-basis: var(--col-width-current-tx-ma); text-align: right; justify-content: flex-end;}
+.header-cell.col-current-rx-ma { flex-basis: var(--col-width-current-rx-ma); text-align: right; justify-content: flex-end;}
+.header-cell.col-gpio { flex-basis: var(--col-width-gpio); text-align: right; justify-content: flex-end;}
+.header-cell.col-certification { flex-basis: var(--col-width-certification); white-space: normal; flex-grow: 1;}
+
 
 #scrollable-data-area {
     max-height: 40vh;
     overflow-y: auto;
-    overflow-x: hidden; /* Hide horizontal scroll here */
+    overflow-x: hidden;
     position: relative;
     z-index: 1;
     background-color: white;
@@ -191,14 +207,13 @@ main { padding: 20px 30px; }
 
 #data-table {
     border-collapse: collapse;
-    width: 100%;
     border-spacing: 0;
     margin: 0;
     padding: 0;
     border-top: none;
     table-layout: fixed;
-    min-width: 100%; /* Ensure table takes at least container width */
-    width: max-content; /* Allow table to grow */
+    width: max-content;
+    min-width: 100%;
 }
 
 #data-table colgroup col { }
@@ -218,34 +233,31 @@ main { padding: 20px 30px; }
     overflow: hidden;
     text-overflow: ellipsis;
     box-sizing: border-box;
-    min-height: 40px; /* Ensure min height for cells */
+    min-height: 40px;
 }
 #data-table td:first-child {
     border-left: none;
 }
-#data-table td.compare-column {
-    width: var(--compare-col-width);
-    text-align: center;
-    white-space: normal;
-}
-#data-table td.col-chipset-vendor { width: 130px; }
-#data-table td.col-model-series { width: 130px; }
-#data-table td.col-model-no { width: 130px; }
-#data-table td.col-antenna { width: 130px; }
-#data-table td.col-socset { width: 130px; }
-#data-table td.col-max-range-m { width: 100px; text-align: right; }
-#data-table td.col-max-length-mm { width: 100px; text-align: right; }
-#data-table td.col-mid-length-mm { width: 100px; text-align: right; }
-#data-table td.col-min-length-mm { width: 100px; text-align: right; }
-#data-table td.col-flash-kb { width: 100px; text-align: right; }
-#data-table td.col-ram-kb { width: 100px; text-align: right; }
-#data-table td.col-reception-sensitivity-dbm { width: 120px; text-align: right; }
-#data-table td.col-transmission-power-min-dbm { width: 130px; text-align: right; }
-#data-table td.col-transmission-power-max-dbm { width: 130px; text-align: right; }
-#data-table td.col-current-tx-ma { width: 100px; text-align: right; }
-#data-table td.col-current-rx-ma { width: 100px; text-align: right; }
-#data-table td.col-gpio { width: 80px; text-align: right; }
-#data-table td.col-certification { width: 250px; white-space: normal; }
+
+#data-table td.compare-column { width: var(--col-width-compare); text-align: center; white-space: normal; }
+#data-table td.col-chipset-vendor { width: var(--col-width-chipset-vendor); }
+#data-table td.col-model-series { width: var(--col-width-model-series); }
+#data-table td.col-model-no { width: var(--col-width-model-no); }
+#data-table td.col-antenna { width: var(--col-width-antenna); }
+#data-table td.col-socset { width: var(--col-width-socset); }
+#data-table td.col-max-range-m { width: var(--col-width-max-range-m); text-align: right; }
+#data-table td.col-max-length-mm { width: var(--col-width-max-length-mm); text-align: right; }
+#data-table td.col-mid-length-mm { width: var(--col-width-mid-length-mm); text-align: right; }
+#data-table td.col-min-length-mm { width: var(--col-width-min-length-mm); text-align: right; }
+#data-table td.col-flash-kb { width: var(--col-width-flash-kb); text-align: right; }
+#data-table td.col-ram-kb { width: var(--col-width-ram-kb); text-align: right; }
+#data-table td.col-reception-sensitivity-dbm { width: var(--col-width-reception-sensitivity-dbm); text-align: right; }
+#data-table td.col-transmission-power-min-dbm { width: var(--col-width-transmission-power-min-dbm); text-align: right; }
+#data-table td.col-transmission-power-max-dbm { width: var(--col-width-transmission-power-max-dbm); text-align: right; }
+#data-table td.col-current-tx-ma { width: var(--col-width-current-tx-ma); text-align: right; }
+#data-table td.col-current-rx-ma { width: var(--col-width-current-rx-ma); text-align: right; }
+#data-table td.col-gpio { width: var(--col-width-gpio); text-align: right; }
+#data-table td.col-certification { width: var(--col-width-certification); white-space: normal; }
 
 
 #data-table tbody tr:first-child td {
@@ -267,7 +279,10 @@ main { padding: 20px 30px; }
     padding: 0;
     position: relative;
     background-color: white;
-    overflow: hidden; /* Hide main vertical scroll */
+    overflow-x: auto; /* Section handles horizontal scroll */
+    overflow-y: hidden; /* Hide vertical scroll on section */
+    /* max-height needs to account for H2, top scrollbar, and desired content height */
+    max-height: 85vh; /* Adjust overall height as needed */
 }
 
 #comparison-section h2 {
@@ -280,41 +295,48 @@ main { padding: 20px 30px; }
     box-sizing: border-box;
     position: sticky;
     top: 0;
-    left: 0;
+    left: 0; /* Stick to left during horizontal scroll */
     background-color: white;
     z-index: 10;
     display: flex;
     align-items: center;
+    width: 100%; /* Ensure H2 spans the container width */
 }
 
 #comparison-top-scrollbar-container {
     height: var(--scrollbar-height);
     overflow-x: auto;
     overflow-y: hidden;
-    background-color: #f1f1f1; /* Subtle background for scrollbar area */
-    display: none; /* Initially hidden, shown by JS if needed */
-    position: sticky; /* Stick below H2 */
+    background-color: #f1f1f1;
+    display: none;
+    position: sticky;
     top: var(--comparison-h2-height);
-    z-index: 9; /* Below H2 */
+    left: 0; /* Stick below H2 and to the left */
+    z-index: 9;
+    width: 100%; /* Span container width */
+    box-sizing: border-box;
 }
 #comparison-top-scrollbar-container::-webkit-scrollbar {
-    display: none; /* Hide the actual scrollbar visual */
+    height: 0;
+    width: 0;
 }
 #comparison-top-scrollbar-measure {
-    height: 1px; /* Only needs width */
-    width: 100%; /* Default, JS will set actual width */
+    height: 1px;
+    width: 100%;
 }
 
 #comparison-container {
     display: flex;
     gap: 0;
-    width: max-content;
-    padding: 15px 0 15px 0;
+    width: max-content; /* Allow content to determine width */
+    padding: 15px 15px 15px 0; /* T, R, B, L - Add right padding back */
     background-color: white;
-    /* Let comparison-section handle scroll */
-    max-height: calc(80vh - var(--comparison-h2-height) - var(--scrollbar-height)); /* Adjust height */
-    overflow-y: auto; /* Vertical scroll for container */
-    overflow-x: hidden; /* Horizontal handled by parent */
+    overflow-y: auto; /* Container handles vertical scroll */
+    overflow-x: hidden; /* Hide horizontal scroll on container */
+    /* Calculate max height considering H2 and top scrollbar */
+    max-height: calc(85vh - var(--comparison-h2-height) - var(--scrollbar-height));
+    position: relative; /* Needed for sticky context */
+    z-index: 1; /* Below sticky elements */
 }
 
 .comparison-specs {
@@ -361,11 +383,9 @@ main { padding: 20px 30px; }
     position: relative;
     background-color: #fff;
 }
-/* Remove border from the phantom last element */
 .comparison-product:last-of-type {
-     border-right: none; /* Explicitly remove right border */
-     margin-right: 0; /* Remove any potential margin */
-     padding-right: 0; /* Remove padding if border was the issue */
+     border-right: none; /* Keep this */
+     /* padding-right: 0; Remove padding removal */
 }
 .comparison-product:first-of-type {
     border-left: none;
@@ -375,10 +395,10 @@ main { padding: 20px 30px; }
     background-color: white;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
-    position: sticky; /* Make product header sticky again */
-    top: 0; /* Stick to the top of #comparison-container */
-    z-index: 4; /* Below specs */
-    transform: translateZ(0); /* Force layer */
+    position: sticky;
+    top: 0; /* Stick to top of comparison-container */
+    z-index: 4;
+    transform: translateZ(0);
 }
 
 .comparison-product-sticky div {
