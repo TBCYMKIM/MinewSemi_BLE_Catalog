@@ -11,27 +11,6 @@
     --remove-hover-color: #c82333;
     --comparison-h2-height: 58px;
     --scrollbar-height: 15px;
-
-    --col-width-compare: 85px;
-    /* Adjust other column widths based on content and testing */
-    --col-width-chipset-vendor: 130px;
-    --col-width-model-series: 140px;
-    --col-width-model-no: 150px;
-    --col-width-antenna: 110px;
-    --col-width-socset: 110px;
-    --col-width-max-range-m: 100px;
-    --col-width-max-length-mm: 110px;
-    --col-width-mid-length-mm: 110px;
-    --col-width-min-length-mm: 110px;
-    --col-width-flash-kb: 90px;
-    --col-width-ram-kb: 90px;
-    --col-width-reception-sensitivity-dbm: 130px;
-    --col-width-transmission-power-min-dbm: 140px;
-    --col-width-transmission-power-max-dbm: 140px;
-    --col-width-current-tx-ma: 100px;
-    --col-width-current-rx-ma: 100px;
-    --col-width-gpio: 80px;
-    --col-width-certification: 300px;
 }
 
 body {
@@ -150,8 +129,8 @@ main { padding: 20px 30px; }
     border-bottom: 2px solid var(--border-color);
     padding: 0;
     margin: 0;
-    width: max-content;
-    min-width: 100%;
+    width: max-content; /* Let content determine width */
+    min-width: 100%; /* Ensure it spans container */
     box-sizing: border-box;
 }
 
@@ -161,41 +140,19 @@ main { padding: 20px 30px; }
     color: var(--primary-color);
     text-align: left;
     font-size: 0.9em;
-    white-space: nowrap;
+    white-space: nowrap; /* Crucial for measuring full width */
     border-right: 1px solid var(--border-color);
-    flex-grow: 0;
+    flex-grow: 0; /* Don't allow flex grow/shrink */
     flex-shrink: 0;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     min-height: 38px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Widths will be set by JS */
 }
 .header-cell:last-child {
     border-right: none;
 }
-
-.header-cell.compare-column { width: var(--col-width-compare); min-width: var(--col-width-compare); text-align: center; justify-content: center; }
-.header-cell.col-chipset-vendor { width: var(--col-width-chipset-vendor); min-width: var(--col-width-chipset-vendor);}
-.header-cell.col-model-series { width: var(--col-width-model-series); min-width: var(--col-width-model-series);}
-.header-cell.col-model-no { width: var(--col-width-model-no); min-width: var(--col-width-model-no);}
-.header-cell.col-antenna { width: var(--col-width-antenna); min-width: var(--col-width-antenna);}
-.header-cell.col-socset { width: var(--col-width-socset); min-width: var(--col-width-socset);}
-.header-cell.col-max-range-m { width: var(--col-width-max-range-m); min-width: var(--col-width-max-range-m); text-align: right; justify-content: flex-end;}
-.header-cell.col-max-length-mm { width: var(--col-width-max-length-mm); min-width: var(--col-width-max-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-mid-length-mm { width: var(--col-width-mid-length-mm); min-width: var(--col-width-mid-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-min-length-mm { width: var(--col-width-min-length-mm); min-width: var(--col-width-min-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-flash-kb { width: var(--col-width-flash-kb); min-width: var(--col-width-flash-kb); text-align: right; justify-content: flex-end;}
-.header-cell.col-ram-kb { width: var(--col-width-ram-kb); min-width: var(--col-width-ram-kb); text-align: right; justify-content: flex-end;}
-.header-cell.col-reception-sensitivity-dbm { width: var(--col-width-reception-sensitivity-dbm); min-width: var(--col-width-reception-sensitivity-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-min-dbm { width: var(--col-width-transmission-power-min-dbm); min-width: var(--col-width-transmission-power-min-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-max-dbm { width: var(--col-width-transmission-power-max-dbm); min-width: var(--col-width-transmission-power-max-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-current-tx-ma { width: var(--col-width-current-tx-ma); min-width: var(--col-width-current-tx-ma); text-align: right; justify-content: flex-end;}
-.header-cell.col-current-rx-ma { width: var(--col-width-current-rx-ma); min-width: var(--col-width-current-rx-ma); text-align: right; justify-content: flex-end;}
-.header-cell.col-gpio { width: var(--col-width-gpio); min-width: var(--col-width-gpio); text-align: right; justify-content: flex-end;}
-.header-cell.col-certification { width: var(--col-width-certification); min-width: var(--col-width-certification); white-space: normal; flex-grow: 1;}
-
 
 #scrollable-data-area {
     max-height: 40vh;
@@ -214,8 +171,8 @@ main { padding: 20px 30px; }
     margin: 0;
     padding: 0;
     border-top: none;
-    table-layout: fixed;
-    width: max-content;
+    table-layout: fixed; /* Crucial for respecting cell widths */
+    width: max-content; /* Let JS set min-width based on calculated header width */
     min-width: 100%;
 }
 
@@ -237,31 +194,11 @@ main { padding: 20px 30px; }
     text-overflow: ellipsis;
     box-sizing: border-box;
     min-height: 40px;
+    /* Widths will be set by JS */
 }
 #data-table td:first-child {
     border-left: none;
 }
-
-#data-table td.compare-column { width: var(--col-width-compare); text-align: center; white-space: normal; }
-#data-table td.col-chipset-vendor { width: var(--col-width-chipset-vendor); }
-#data-table td.col-model-series { width: var(--col-width-model-series); }
-#data-table td.col-model-no { width: var(--col-width-model-no); }
-#data-table td.col-antenna { width: var(--col-width-antenna); }
-#data-table td.col-socset { width: var(--col-width-socset); }
-#data-table td.col-max-range-m { width: var(--col-width-max-range-m); text-align: right; }
-#data-table td.col-max-length-mm { width: var(--col-width-max-length-mm); text-align: right; }
-#data-table td.col-mid-length-mm { width: var(--col-width-mid-length-mm); text-align: right; }
-#data-table td.col-min-length-mm { width: var(--col-width-min-length-mm); text-align: right; }
-#data-table td.col-flash-kb { width: var(--col-width-flash-kb); text-align: right; }
-#data-table td.col-ram-kb { width: var(--col-width-ram-kb); text-align: right; }
-#data-table td.col-reception-sensitivity-dbm { width: var(--col-width-reception-sensitivity-dbm); text-align: right; }
-#data-table td.col-transmission-power-min-dbm { width: var(--col-width-transmission-power-min-dbm); text-align: right; }
-#data-table td.col-transmission-power-max-dbm { width: var(--col-width-transmission-power-max-dbm); text-align: right; }
-#data-table td.col-current-tx-ma { width: var(--col-width-current-tx-ma); text-align: right; }
-#data-table td.col-current-rx-ma { width: var(--col-width-current-rx-ma); text-align: right; }
-#data-table td.col-gpio { width: var(--col-width-gpio); text-align: right; }
-#data-table td.col-certification { width: var(--col-width-certification); white-space: normal; }
-
 
 #data-table tbody tr:first-child td {
     border-top: 1px solid var(--border-color);
@@ -282,7 +219,7 @@ main { padding: 20px 30px; }
     padding: 0;
     position: relative;
     background-color: white;
-    overflow: hidden; /* Parent hides overflow */
+    overflow: hidden;
     max-height: 85vh;
 }
 
@@ -309,17 +246,22 @@ main { padding: 20px 30px; }
     overflow-x: auto;
     overflow-y: hidden;
     background-color: #f1f1f1;
-    display: none;
+    display: none; /* Show/hide via JS */
     position: sticky;
-    top: var(--comparison-h2-height);
+    top: var(--comparison-h2-height); /* Stick below H2 */
     left: 0;
-    z-index: 9;
+    z-index: 9; /* Below H2 */
     width: 100%;
     box-sizing: border-box;
 }
 #comparison-top-scrollbar-container::-webkit-scrollbar {
-    height: 0;
-    width: 0;
+    height: 8px; /* Make scrollbar visible */
+    width: 8px;
+    background-color: #f1f1f1;
+}
+#comparison-top-scrollbar-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
 }
 #comparison-top-scrollbar-measure {
     height: 1px;
@@ -330,14 +272,25 @@ main { padding: 20px 30px; }
     display: flex;
     gap: 0;
     width: max-content;
-    padding: 15px 15px 15px 0; /* Add right padding back */
+    padding: 15px 15px 15px 0; /* Add right padding again */
     background-color: white;
     max-height: calc(85vh - var(--comparison-h2-height) - var(--scrollbar-height));
     overflow-y: auto;
-    overflow-x: auto; /* Container handles horizontal scroll */
+    overflow-x: auto; /* Container handles horizontal scroll now */
     position: relative;
-    z-index: 1; /* Below sticky elements */
+    z-index: 1; /* Keep below sticky elements */
+    /* Add explicit scrollbar styling for the main container */
 }
+#comparison-container::-webkit-scrollbar {
+     height: 8px;
+     width: 8px;
+     background-color: #f1f1f1;
+}
+#comparison-container::-webkit-scrollbar-thumb {
+     background: #c1c1c1;
+     border-radius: 4px;
+}
+
 
 .comparison-specs {
     flex: 0 0 auto;
@@ -345,10 +298,10 @@ main { padding: 20px 30px; }
     padding-right: 20px;
     position: sticky;
     left: 0;
-    background-color: var(--bg-color);
-    z-index: 6; /* Specs highest */
+    background-color: var(--bg-color); /* Ensure background */
+    z-index: 5; /* Above product sticky */
     border-right: 2px solid var(--border-color);
-    transform: translateZ(0);
+    /* transform: translateZ(0); Remove for now */
 }
 
 .comparison-specs .spec-sticky-header,
@@ -391,13 +344,15 @@ main { padding: 20px 30px; }
 }
 
 .comparison-product-sticky {
-    background-color: white;
+    background-color: white; /* Ensure solid background */
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
+    /* Stick to top of comparison-container, adjusted for h2 and top scrollbar */
     top: 0;
-    z-index: 5; /* Below specs */
-    /* transform: translateZ(0); Remove this hack for now */
+    /* top: calc(var(--comparison-h2-height) + var(--scrollbar-height)); Incorrect, should be 0 relative to container */
+    z-index: 4; /* Below specs */
+    /* transform: translateZ(0); Remove for now */
 }
 
 .comparison-product-sticky div {

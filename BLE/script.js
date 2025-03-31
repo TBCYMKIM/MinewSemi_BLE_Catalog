@@ -3,8 +3,8 @@ const GOOGLE_FORM_LINK = 'YOUR_GOOGLE_FORM_LINK_HERE';
 let isSyncingScroll = false;
 let topScrollContainer = null;
 let topScrollMeasure = null;
-let bottomScrollContainer = null;
-let comparisonContainer = null;
+let bottomScrollContainer = null; // Refers to comparison-section now
+let comparisonContainer = null; // Refers to the inner container
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('data.csv')
@@ -27,12 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ];
                 textColumns = headers.filter(h => !numericColumns.includes(h));
                 renderFilterTabs(headers);
-                applyFiltersAndRender();
+                applyFiltersAndRender(); // Initial render
 
+                // Initialize comparison scroll elements
                 topScrollContainer = document.getElementById('comparison-top-scrollbar-container');
                 topScrollMeasure = document.getElementById('comparison-top-scrollbar-measure');
-                bottomScrollContainer = document.getElementById('comparison-section'); // Section handles bottom scroll
-                comparisonContainer = document.getElementById('comparison-container');
+                bottomScrollContainer = document.getElementById('comparison-section'); // This element scrolls horizontally
+                comparisonContainer = document.getElementById('comparison-container'); // This element scrolls vertically
                 setupScrollSync();
 
             } else {
@@ -56,70 +57,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Comparison Scroll Sync Logic ---
     function setupScrollSync() {
         if (!topScrollContainer || !bottomScrollContainer) return;
 
         topScrollContainer.addEventListener('scroll', () => {
             if (isSyncingScroll) return;
             isSyncingScroll = true;
-            // Sync bottom container (comparison-section) scrollLeft
             bottomScrollContainer.scrollLeft = topScrollContainer.scrollLeft;
             isSyncingScroll = false;
-        });
+        }, { passive: true }); // Use passive listener for better performance
 
         bottomScrollContainer.addEventListener('scroll', () => {
             if (isSyncingScroll) return;
             isSyncingScroll = true;
-             // Sync top container scrollLeft
             topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
             isSyncingScroll = false;
-        });
+        }, { passive: true });
     }
 
     function updateTopScrollbarWidth() {
-        // console.log("Updating top scrollbar width...");
-        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) {
-            // console.log("Required elements for top scrollbar not found.");
-             return;
-        }
+        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) return;
 
-        // Use the scrollWidth of the element that actually scrolls horizontally
-        const scrollWidth = bottomScrollContainer.scrollWidth;
-        const clientWidth = bottomScrollContainer.clientWidth;
+        // Use scrollWidth of the element that determines the actual content width
+        const contentWidth = comparisonContainer.scrollWidth;
+        const containerWidth = bottomScrollContainer.clientWidth; // Width of the viewport
 
-        // console.log(`Bottom Scroll Width: ${scrollWidth}, Client Width: ${clientWidth}`);
-
-        if (scrollWidth > clientWidth) {
-            topScrollMeasure.style.width = `${scrollWidth}px`;
+        if (contentWidth > containerWidth) {
+            topScrollMeasure.style.width = `${contentWidth}px`;
             topScrollContainer.style.display = 'block';
-            // console.log(`Top scrollbar should be visible. Width set to ${scrollWidth}px`);
         } else {
             topScrollMeasure.style.width = '100%';
             topScrollContainer.style.display = 'none';
-            // console.log("Top scrollbar hidden.");
         }
 
+        // Ensure initial sync after DOM updates
         requestAnimationFrame(() => {
             topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
-            // console.log(`Initial scroll sync: ${topScrollContainer.scrollLeft}`);
         });
     }
 
+
+    // --- Make render/apply functions globally accessible or manage scope ---
     window.renderComparisonView = function() {
         const comparisonSection = document.getElementById('comparison-section');
-        const container = document.getElementById('comparison-container');
+        const container = document.getElementById('comparison-container'); // Target for inner content
         if (!container || !comparisonSection) return;
 
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear previous comparison items
         const productsToCompare = getComparisonData();
 
         if (productsToCompare.length === 0) {
             comparisonSection.style.display = 'none';
-            if(topScrollContainer) topScrollContainer.style.display = 'none';
+            if (topScrollContainer) topScrollContainer.style.display = 'none';
             return;
         }
 
-        comparisonSection.style.display = 'block';
+        comparisonSection.style.display = 'block'; // Show the section
 
         const stickySpecs = ['Action', 'Image'];
         const scrollableSpecs = [...csvHeaders];
@@ -155,8 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         specsDiv.appendChild(inquirySpecHeaderDiv);
 
-        container.appendChild(specsDiv);
-
+        container.appendChild(specsDiv); // Add spec names column to container
 
         productsToCompare.forEach(product => {
             const productDiv = document.createElement('div');
@@ -233,21 +226,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             productDiv.appendChild(scrollableDiv);
 
-
-            container.appendChild(productDiv);
+            container.appendChild(productDiv); // Add product column to container
         });
 
+        // Update top scrollbar after rendering content
         requestAnimationFrame(updateTopScrollbarWidth);
     }
 
     window.applyFiltersAndRender = function() {
         const currentFilteredData = filterData();
         renderFilters();
-        renderDataTable(currentFilteredData); // This needs to sync widths now
+        renderDataTable(currentFilteredData);
         renderComparisonView();
     }
 
 }); // End of DOMContentLoaded
+
 
 let originalData = [];
 let csvHeaders = [];
@@ -450,6 +444,7 @@ function filterData() {
     return filteredData;
 }
 
+// --- MODIFIED renderDataTable function ---
 function renderDataTable(data) {
     const tableContainer = document.getElementById('table-container');
     const stickyHeaderRow = document.getElementById('sticky-header-row');
@@ -490,9 +485,10 @@ function renderDataTable(data) {
 
     stickyHeaderRow.style.display = 'flex';
     scrollableDataArea.style.display = 'block';
-    table.style.display = '';
+    table.style.display = 'table'; // Use 'table' for display
     noDataMsg.style.display = 'none';
 
+    // Create header cells
     const headerCellCompare = document.createElement('div');
     headerCellCompare.className = 'header-cell compare-column';
     headerCellCompare.textContent = 'Compare';
@@ -502,11 +498,12 @@ function renderDataTable(data) {
         const headerCell = document.createElement('div');
         headerCell.className = 'header-cell';
         headerCell.textContent = headerText;
-        const className = headerText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const className = headerText.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-'); // Generate class name
         headerCell.classList.add(`col-${className}`);
         stickyHeaderRow.appendChild(headerCell);
     });
 
+    // Create data rows
     data.forEach(item => {
         const r = tbody.insertRow();
 
@@ -537,54 +534,79 @@ function renderDataTable(data) {
         csvHeaders.forEach(headerKey => {
             const cell = r.insertCell();
             cell.textContent = (item[headerKey] ?? '');
-            const className = headerKey.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const className = headerKey.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-'); // Generate same class name
             cell.classList.add(`col-${className}`);
         });
     });
 
-    // --- 너비 동기화 로직 추가 ---
+    // Sync widths after rendering
     requestAnimationFrame(() => {
         syncHeaderWidths();
     });
 }
 
-// --- 너비 동기화 함수 ---
 function syncHeaderWidths() {
     const headerCells = document.querySelectorAll('#sticky-header-row .header-cell');
-    const firstDataRowCells = document.querySelectorAll('#data-table tbody tr:first-child td');
+    const firstDataRow = document.querySelector('#data-table tbody tr:first-child');
 
-    if (headerCells.length === 0 || firstDataRowCells.length === 0 || headerCells.length !== firstDataRowCells.length) {
-        // console.warn("Cannot sync widths: Header and data cells mismatch or not found.");
+    if (!firstDataRow || headerCells.length === 0) {
+        // No data rows or header cells to sync with
+        return;
+    }
+    const firstDataRowCells = firstDataRow.querySelectorAll('td');
+
+    if (firstDataRowCells.length === 0 || headerCells.length !== firstDataRowCells.length) {
+        console.warn("Cannot sync widths: Header and data cells mismatch or not found in first row.");
         return;
     }
 
-    // console.log(`Syncing ${headerCells.length} columns.`);
+    // Reset header widths first to measure natural width needed
+    headerCells.forEach(cell => {
+        cell.style.width = 'auto';
+        cell.style.minWidth = 'auto';
+        cell.style.flexBasis = 'auto'; // Reset flex basis too
+    });
 
-    for (let i = 0; i < headerCells.length; i++) {
-        const headerCell = headerCells[i];
+    let totalHeaderWidth = 0;
+    const columnWidths = [];
+
+    // Calculate required width for each header cell based on its content
+    headerCells.forEach((headerCell, i) => {
+        // Ensure nowrap is temporarily set for measurement if needed (CSS should handle this)
+        // headerCell.style.whiteSpace = 'nowrap';
+        const headerScrollWidth = headerCell.scrollWidth; // Includes padding
+        const headerPadding = parseFloat(getComputedStyle(headerCell).paddingLeft) + parseFloat(getComputedStyle(headerCell).paddingRight);
+        const headerBorder = parseFloat(getComputedStyle(headerCell).borderRightWidth); // Assuming only right border matters for width calc
+        const requiredWidth = headerScrollWidth + headerBorder + 2; // Add a small buffer
+
+        columnWidths[i] = requiredWidth;
+        totalHeaderWidth += requiredWidth;
+        // headerCell.style.whiteSpace = ''; // Reset white-space if changed
+    });
+
+    // Apply calculated widths
+    headerCells.forEach((headerCell, i) => {
+        headerCell.style.minWidth = `${columnWidths[i]}px`;
+        headerCell.style.width = `${columnWidths[i]}px`;
+        // Also apply to data cells
         const dataCell = firstDataRowCells[i];
-        const dataCellWidth = dataCell.getBoundingClientRect().width;
+        if (dataCell) {
+             dataCell.style.width = `${columnWidths[i]}px`;
+             dataCell.style.minWidth = `${columnWidths[i]}px`; // Ensure minWidth too
+        }
+    });
 
-        // Set min-width to ensure header doesn't shrink smaller than data
-        // Set width as well for flex-basis behavior (might override flex-basis in CSS)
-        headerCell.style.minWidth = `${dataCellWidth}px`;
-        headerCell.style.width = `${dataCellWidth}px`; // Or set flex-basis if preferred
-        // headerCell.style.flexBasis = `${dataCellWidth}px`;
-
-         // console.log(`Column ${i}: Header width set to ${dataCellWidth}px`);
-    }
-
-    // Adjust table width to match header width if needed (or vice versa)
-    const headerRow = document.getElementById('sticky-header-row');
+    // Set table min-width to ensure horizontal scroll works correctly
     const dataTable = document.getElementById('data-table');
-    if (headerRow && dataTable) {
-         const headerWidth = headerRow.getBoundingClientRect().width;
-         // console.log(`Header Width: ${headerWidth}, Table Current Width: ${dataTable.style.width}`);
-         // Force table minimum width to match the measured header width
-         dataTable.style.minWidth = `${headerWidth}px`;
-         // Optional: Force width if needed, but minWidth is often enough with width: max-content
-         // dataTable.style.width = `${headerWidth}px`;
+    if (dataTable) {
+        dataTable.style.minWidth = `${totalHeaderWidth}px`;
+        dataTable.style.width = `${totalHeaderWidth}px`; // Set explicit width too
     }
+    const headerRow = document.getElementById('sticky-header-row');
+     if (headerRow) {
+        headerRow.style.minWidth = `${totalHeaderWidth}px`;
+        headerRow.style.width = `${totalHeaderWidth}px`;
+     }
 }
 
 
