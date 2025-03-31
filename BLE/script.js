@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 topScrollContainer = document.getElementById('comparison-top-scrollbar-container');
                 topScrollMeasure = document.getElementById('comparison-top-scrollbar-measure');
-                bottomScrollContainer = document.getElementById('comparison-section');
+                bottomScrollContainer = document.getElementById('comparison-section'); // Section handles bottom scroll
                 comparisonContainer = document.getElementById('comparison-container');
                 setupScrollSync();
 
@@ -56,13 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 스크롤 동기화 설정 함수 ---
     function setupScrollSync() {
         if (!topScrollContainer || !bottomScrollContainer) return;
 
         topScrollContainer.addEventListener('scroll', () => {
             if (isSyncingScroll) return;
             isSyncingScroll = true;
+            // Sync bottom container (comparison-section) scrollLeft
             bottomScrollContainer.scrollLeft = topScrollContainer.scrollLeft;
             isSyncingScroll = false;
         });
@@ -70,33 +70,42 @@ document.addEventListener('DOMContentLoaded', () => {
         bottomScrollContainer.addEventListener('scroll', () => {
             if (isSyncingScroll) return;
             isSyncingScroll = true;
+             // Sync top container scrollLeft
             topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
             isSyncingScroll = false;
         });
     }
 
-    // --- 상단 스크롤바 너비 설정 함수 ---
     function updateTopScrollbarWidth() {
-        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) return;
+        // console.log("Updating top scrollbar width...");
+        if (!comparisonContainer || !topScrollMeasure || !topScrollContainer || !bottomScrollContainer) {
+            // console.log("Required elements for top scrollbar not found.");
+             return;
+        }
 
-        const scrollWidth = comparisonContainer.scrollWidth;
-        const clientWidth = bottomScrollContainer.clientWidth; // Use bottom container's client width
+        // Use the scrollWidth of the element that actually scrolls horizontally
+        const scrollWidth = bottomScrollContainer.scrollWidth;
+        const clientWidth = bottomScrollContainer.clientWidth;
+
+        // console.log(`Bottom Scroll Width: ${scrollWidth}, Client Width: ${clientWidth}`);
 
         if (scrollWidth > clientWidth) {
             topScrollMeasure.style.width = `${scrollWidth}px`;
-            topScrollContainer.style.display = 'block'; // Show top scrollbar if needed
+            topScrollContainer.style.display = 'block';
+            // console.log(`Top scrollbar should be visible. Width set to ${scrollWidth}px`);
         } else {
-            topScrollMeasure.style.width = '100%'; // Reset width
-            topScrollContainer.style.display = 'none'; // Hide if not needed
+            topScrollMeasure.style.width = '100%';
+            topScrollContainer.style.display = 'none';
+            // console.log("Top scrollbar hidden.");
         }
-        // Ensure initial sync
-         requestAnimationFrame(() => { // Wait for potential rendering updates
+
+        requestAnimationFrame(() => {
             topScrollContainer.scrollLeft = bottomScrollContainer.scrollLeft;
-         });
+            // console.log(`Initial scroll sync: ${topScrollContainer.scrollLeft}`);
+        });
     }
 
-    // --- 비교 보기 렌더링 함수 수정 ---
-    window.renderComparisonView = function() { // Make it global or pass elements if needed
+    window.renderComparisonView = function() {
         const comparisonSection = document.getElementById('comparison-section');
         const container = document.getElementById('comparison-container');
         if (!container || !comparisonSection) return;
@@ -106,13 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (productsToCompare.length === 0) {
             comparisonSection.style.display = 'none';
-            if(topScrollContainer) topScrollContainer.style.display = 'none'; // Hide top scrollbar too
+            if(topScrollContainer) topScrollContainer.style.display = 'none';
             return;
         }
 
         comparisonSection.style.display = 'block';
-        // Top scrollbar might need to be displayed even if comparison view was hidden
-        // updateTopScrollbarWidth() will handle this later
 
         const stickySpecs = ['Action', 'Image'];
         const scrollableSpecs = [...csvHeaders];
@@ -169,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     removeBtn.className = 'comparison-remove-btn';
                     removeBtn.onclick = () => {
                         viewedProductIds.delete(uniqueId);
-                        renderComparisonView(); // Re-render after delete
+                        renderComparisonView();
                         const tableButton = document.querySelector(`.details-button[data-unique-id="${uniqueId}"], .remove-from-table-btn[data-unique-id="${uniqueId}"]`);
                         if(tableButton) {
                             tableButton.textContent = 'Add';
@@ -230,21 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(productDiv);
         });
 
-        // --- 비교 보기 렌더링 후 상단 스크롤바 너비 업데이트 ---
-        requestAnimationFrame(updateTopScrollbarWidth); // Ensure DOM updates before calculating width
+        requestAnimationFrame(updateTopScrollbarWidth);
     }
 
-    // --- 필터 적용 및 렌더링 함수 수정 ---
-    window.applyFiltersAndRender = function() { // Make global or pass elements
+    window.applyFiltersAndRender = function() {
         const currentFilteredData = filterData();
         renderFilters();
-        renderDataTable(currentFilteredData);
-        renderComparisonView(); // This will now update the top scrollbar as well
+        renderDataTable(currentFilteredData); // This needs to sync widths now
+        renderComparisonView();
     }
 
 }); // End of DOMContentLoaded
-
-// --- 나머지 JS 함수 (수정 없음) ---
 
 let originalData = [];
 let csvHeaders = [];
@@ -538,6 +541,50 @@ function renderDataTable(data) {
             cell.classList.add(`col-${className}`);
         });
     });
+
+    // --- 너비 동기화 로직 추가 ---
+    requestAnimationFrame(() => {
+        syncHeaderWidths();
+    });
+}
+
+// --- 너비 동기화 함수 ---
+function syncHeaderWidths() {
+    const headerCells = document.querySelectorAll('#sticky-header-row .header-cell');
+    const firstDataRowCells = document.querySelectorAll('#data-table tbody tr:first-child td');
+
+    if (headerCells.length === 0 || firstDataRowCells.length === 0 || headerCells.length !== firstDataRowCells.length) {
+        // console.warn("Cannot sync widths: Header and data cells mismatch or not found.");
+        return;
+    }
+
+    // console.log(`Syncing ${headerCells.length} columns.`);
+
+    for (let i = 0; i < headerCells.length; i++) {
+        const headerCell = headerCells[i];
+        const dataCell = firstDataRowCells[i];
+        const dataCellWidth = dataCell.getBoundingClientRect().width;
+
+        // Set min-width to ensure header doesn't shrink smaller than data
+        // Set width as well for flex-basis behavior (might override flex-basis in CSS)
+        headerCell.style.minWidth = `${dataCellWidth}px`;
+        headerCell.style.width = `${dataCellWidth}px`; // Or set flex-basis if preferred
+        // headerCell.style.flexBasis = `${dataCellWidth}px`;
+
+         // console.log(`Column ${i}: Header width set to ${dataCellWidth}px`);
+    }
+
+    // Adjust table width to match header width if needed (or vice versa)
+    const headerRow = document.getElementById('sticky-header-row');
+    const dataTable = document.getElementById('data-table');
+    if (headerRow && dataTable) {
+         const headerWidth = headerRow.getBoundingClientRect().width;
+         // console.log(`Header Width: ${headerWidth}, Table Current Width: ${dataTable.style.width}`);
+         // Force table minimum width to match the measured header width
+         dataTable.style.minWidth = `${headerWidth}px`;
+         // Optional: Force width if needed, but minWidth is often enough with width: max-content
+         // dataTable.style.width = `${headerWidth}px`;
+    }
 }
 
 
@@ -548,7 +595,7 @@ function handleDetailsClick(event) {
 
     if (!viewedProductIds.has(uniqueId)) {
         viewedProductIds.add(uniqueId);
-        renderComparisonView(); // Call the global render function
+        renderComparisonView();
         button.textContent = 'Remove';
         button.className = 'remove-from-table-btn';
         button.removeEventListener('click', handleDetailsClick);
@@ -571,7 +618,7 @@ function handleRemoveFromTableClick(event) {
 
     if (viewedProductIds.has(uniqueId)) {
         viewedProductIds.delete(uniqueId);
-        renderComparisonView(); // Call the global render function
+        renderComparisonView();
         button.textContent = 'Add';
         button.className = 'details-button';
         button.removeEventListener('click', handleRemoveFromTableClick);
@@ -610,7 +657,3 @@ function getComparisonData() {
 
     return products;
 }
-
-// renderComparisonView is now defined inside DOMContentLoaded and accessed via window
-
-// applyFiltersAndRender is now defined inside DOMContentLoaded and accessed via window

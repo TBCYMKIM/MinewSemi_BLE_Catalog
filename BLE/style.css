@@ -13,6 +13,7 @@
     --scrollbar-height: 15px;
 
     --col-width-compare: 85px;
+    /* Adjust other column widths based on content and testing */
     --col-width-chipset-vendor: 130px;
     --col-width-model-series: 140px;
     --col-width-model-no: 150px;
@@ -149,8 +150,8 @@ main { padding: 20px 30px; }
     border-bottom: 2px solid var(--border-color);
     padding: 0;
     margin: 0;
-    min-width: 100%;
     width: max-content;
+    min-width: 100%;
     box-sizing: border-box;
 }
 
@@ -168,30 +169,32 @@ main { padding: 20px 30px; }
     display: flex;
     align-items: center;
     min-height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .header-cell:last-child {
     border-right: none;
 }
 
-.header-cell.compare-column { flex-basis: var(--col-width-compare); text-align: center; justify-content: center; }
-.header-cell.col-chipset-vendor { flex-basis: var(--col-width-chipset-vendor); }
-.header-cell.col-model-series { flex-basis: var(--col-width-model-series); }
-.header-cell.col-model-no { flex-basis: var(--col-width-model-no); }
-.header-cell.col-antenna { flex-basis: var(--col-width-antenna); }
-.header-cell.col-socset { flex-basis: var(--col-width-socset); }
-.header-cell.col-max-range-m { flex-basis: var(--col-width-max-range-m); text-align: right; justify-content: flex-end;}
-.header-cell.col-max-length-mm { flex-basis: var(--col-width-max-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-mid-length-mm { flex-basis: var(--col-width-mid-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-min-length-mm { flex-basis: var(--col-width-min-length-mm); text-align: right; justify-content: flex-end;}
-.header-cell.col-flash-kb { flex-basis: var(--col-width-flash-kb); text-align: right; justify-content: flex-end;}
-.header-cell.col-ram-kb { flex-basis: var(--col-width-ram-kb); text-align: right; justify-content: flex-end;}
-.header-cell.col-reception-sensitivity-dbm { flex-basis: var(--col-width-reception-sensitivity-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-min-dbm { flex-basis: var(--col-width-transmission-power-min-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-transmission-power-max-dbm { flex-basis: var(--col-width-transmission-power-max-dbm); text-align: right; justify-content: flex-end;}
-.header-cell.col-current-tx-ma { flex-basis: var(--col-width-current-tx-ma); text-align: right; justify-content: flex-end;}
-.header-cell.col-current-rx-ma { flex-basis: var(--col-width-current-rx-ma); text-align: right; justify-content: flex-end;}
-.header-cell.col-gpio { flex-basis: var(--col-width-gpio); text-align: right; justify-content: flex-end;}
-.header-cell.col-certification { flex-basis: var(--col-width-certification); white-space: normal; flex-grow: 1;}
+.header-cell.compare-column { width: var(--col-width-compare); min-width: var(--col-width-compare); text-align: center; justify-content: center; }
+.header-cell.col-chipset-vendor { width: var(--col-width-chipset-vendor); min-width: var(--col-width-chipset-vendor);}
+.header-cell.col-model-series { width: var(--col-width-model-series); min-width: var(--col-width-model-series);}
+.header-cell.col-model-no { width: var(--col-width-model-no); min-width: var(--col-width-model-no);}
+.header-cell.col-antenna { width: var(--col-width-antenna); min-width: var(--col-width-antenna);}
+.header-cell.col-socset { width: var(--col-width-socset); min-width: var(--col-width-socset);}
+.header-cell.col-max-range-m { width: var(--col-width-max-range-m); min-width: var(--col-width-max-range-m); text-align: right; justify-content: flex-end;}
+.header-cell.col-max-length-mm { width: var(--col-width-max-length-mm); min-width: var(--col-width-max-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-mid-length-mm { width: var(--col-width-mid-length-mm); min-width: var(--col-width-mid-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-min-length-mm { width: var(--col-width-min-length-mm); min-width: var(--col-width-min-length-mm); text-align: right; justify-content: flex-end;}
+.header-cell.col-flash-kb { width: var(--col-width-flash-kb); min-width: var(--col-width-flash-kb); text-align: right; justify-content: flex-end;}
+.header-cell.col-ram-kb { width: var(--col-width-ram-kb); min-width: var(--col-width-ram-kb); text-align: right; justify-content: flex-end;}
+.header-cell.col-reception-sensitivity-dbm { width: var(--col-width-reception-sensitivity-dbm); min-width: var(--col-width-reception-sensitivity-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-transmission-power-min-dbm { width: var(--col-width-transmission-power-min-dbm); min-width: var(--col-width-transmission-power-min-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-transmission-power-max-dbm { width: var(--col-width-transmission-power-max-dbm); min-width: var(--col-width-transmission-power-max-dbm); text-align: right; justify-content: flex-end;}
+.header-cell.col-current-tx-ma { width: var(--col-width-current-tx-ma); min-width: var(--col-width-current-tx-ma); text-align: right; justify-content: flex-end;}
+.header-cell.col-current-rx-ma { width: var(--col-width-current-rx-ma); min-width: var(--col-width-current-rx-ma); text-align: right; justify-content: flex-end;}
+.header-cell.col-gpio { width: var(--col-width-gpio); min-width: var(--col-width-gpio); text-align: right; justify-content: flex-end;}
+.header-cell.col-certification { width: var(--col-width-certification); min-width: var(--col-width-certification); white-space: normal; flex-grow: 1;}
 
 
 #scrollable-data-area {
@@ -279,10 +282,8 @@ main { padding: 20px 30px; }
     padding: 0;
     position: relative;
     background-color: white;
-    overflow-x: auto; /* Section handles horizontal scroll */
-    overflow-y: hidden; /* Hide vertical scroll on section */
-    /* max-height needs to account for H2, top scrollbar, and desired content height */
-    max-height: 85vh; /* Adjust overall height as needed */
+    overflow: hidden; /* Parent hides overflow */
+    max-height: 85vh;
 }
 
 #comparison-section h2 {
@@ -295,12 +296,12 @@ main { padding: 20px 30px; }
     box-sizing: border-box;
     position: sticky;
     top: 0;
-    left: 0; /* Stick to left during horizontal scroll */
+    left: 0;
     background-color: white;
     z-index: 10;
     display: flex;
     align-items: center;
-    width: 100%; /* Ensure H2 spans the container width */
+    width: 100%;
 }
 
 #comparison-top-scrollbar-container {
@@ -311,9 +312,9 @@ main { padding: 20px 30px; }
     display: none;
     position: sticky;
     top: var(--comparison-h2-height);
-    left: 0; /* Stick below H2 and to the left */
+    left: 0;
     z-index: 9;
-    width: 100%; /* Span container width */
+    width: 100%;
     box-sizing: border-box;
 }
 #comparison-top-scrollbar-container::-webkit-scrollbar {
@@ -328,14 +329,13 @@ main { padding: 20px 30px; }
 #comparison-container {
     display: flex;
     gap: 0;
-    width: max-content; /* Allow content to determine width */
-    padding: 15px 15px 15px 0; /* T, R, B, L - Add right padding back */
+    width: max-content;
+    padding: 15px 15px 15px 0; /* Add right padding back */
     background-color: white;
-    overflow-y: auto; /* Container handles vertical scroll */
-    overflow-x: hidden; /* Hide horizontal scroll on container */
-    /* Calculate max height considering H2 and top scrollbar */
     max-height: calc(85vh - var(--comparison-h2-height) - var(--scrollbar-height));
-    position: relative; /* Needed for sticky context */
+    overflow-y: auto;
+    overflow-x: auto; /* Container handles horizontal scroll */
+    position: relative;
     z-index: 1; /* Below sticky elements */
 }
 
@@ -346,7 +346,7 @@ main { padding: 20px 30px; }
     position: sticky;
     left: 0;
     background-color: var(--bg-color);
-    z-index: 5;
+    z-index: 6; /* Specs highest */
     border-right: 2px solid var(--border-color);
     transform: translateZ(0);
 }
@@ -384,8 +384,7 @@ main { padding: 20px 30px; }
     background-color: #fff;
 }
 .comparison-product:last-of-type {
-     border-right: none; /* Keep this */
-     /* padding-right: 0; Remove padding removal */
+     border-right: none;
 }
 .comparison-product:first-of-type {
     border-left: none;
@@ -396,9 +395,9 @@ main { padding: 20px 30px; }
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
-    top: 0; /* Stick to top of comparison-container */
-    z-index: 4;
-    transform: translateZ(0);
+    top: 0;
+    z-index: 5; /* Below specs */
+    /* transform: translateZ(0); Remove this hack for now */
 }
 
 .comparison-product-sticky div {
